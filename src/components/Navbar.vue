@@ -10,6 +10,18 @@
       <md-icon v-else>fullscreen</md-icon>
       <md-tooltip>Toggle fullscreen</md-tooltip>
     </md-button>
+
+    <md-button class="md-icon-button" @click="() => {}">
+      <md-icon>people_alt</md-icon>
+      <md-tooltip>Connect to workspace</md-tooltip>
+    </md-button>
+
+    <md-button class="md-icon-button" @click="openIdDialog">
+      <md-icon>info</md-icon>
+      <md-tooltip>View workspace id</md-tooltip>
+      <WorkspaceIdDialog />
+    </md-button>
+
   </md-toolbar>
 </template>
 
@@ -20,6 +32,7 @@
   import MdIcon from 'vue-material/dist/components/MdIcon';
   import MdToolbar from 'vue-material/dist/components/MdToolbar';
   import MdTooltip from 'vue-material/dist/components/MdTooltip';
+  import WorkspaceIdDialog from '@/components/modal/WorkspaceIdDialog';
 
   // Events fired when the site enters fullscreen
   const events = [
@@ -35,6 +48,9 @@
   Vue.use(MdTooltip);
 
   export default {
+    components: {
+      WorkspaceIdDialog
+    },
     name: 'Navbar',
     data() {
       return {
@@ -60,8 +76,6 @@
           document.fullScreen ||
           document.mozFullScreen ||
           document.webkitIsFullScreen;
-
-        console.log(!!this.isFullScreen);
       },
       toggleFullscreen() {
         if (document.fullScreenElement ||
@@ -82,6 +96,9 @@
             document.webkitCancelFullScreen();
           }
         }
+      },
+      openIdDialog() {
+        EventBus.$emit(Events.SHOW_ID_DIALOG);
       }
     }
   };

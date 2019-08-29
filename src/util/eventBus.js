@@ -13,7 +13,8 @@ const Events = {
   CHARACTER_SELECTION_CHANGE: 'onCharSelectChange',
   // Fired when text in the editor is added/removed.
   // This is used for getting the size in bytes
-  ON_TEXT_CONTENT_CHANGE: 'onTextContChange'
+  ON_TEXT_CONTENT_CHANGE: 'onTextContChange',
+  SHOW_ID_DIALOG: 'showIdDialog'
 };
 
 

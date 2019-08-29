@@ -26,7 +26,7 @@ const defaultState = {
   currentTheme: 'vs-dark',
   themes: themeNames,
   renderWhitespace: true,
-  debug: true,
+  debug: false,
   indentSize: 4,
   useTabs: true
 };
