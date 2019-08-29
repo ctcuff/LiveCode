@@ -1,12 +1,4 @@
-// Takes a property (from the state) returns a function
-// that sets that property's value
-const createSetter = property => (state, value) => {
-  state[property] = value;
-};
-
-const createToggler = property => (state) => {
-  state[property] = !state[property];
-};
+import { createSetter, createToggler } from '@/util/creator';
 
 const mutationTypes = {
   setLanguage: 'setLanguage',
@@ -17,6 +9,7 @@ const mutationTypes = {
   setUseTabs: 'setUseTabs',
   setIndentSize: 'setIndentSize'
 };
+
 const editorDefaults = {
   selectedLanguage: 'python',
   fontSize: 14,
