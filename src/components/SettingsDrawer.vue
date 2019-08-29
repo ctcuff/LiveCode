@@ -1,9 +1,9 @@
 <template>
-  <md-drawer :md-active.sync="menuVisible" md-persistent="full">
+  <md-drawer :md-active.sync="showMenu" md-persistent="full">
     <md-toolbar md-elevation="0">
       <span>Settings</span>
       <div class="md-toolbar-section-end">
-        <md-button class="md-icon-button md-dense" @click="menuVisible = false">
+        <md-button class="md-icon-button md-dense" @click="hide">
           <md-icon>keyboard_arrow_left</md-icon>
         </md-button>
       </div>
@@ -84,9 +84,9 @@
 
 <script>
   import Vue from 'vue';
-  import { EventBus, Events } from '@/util/eventBus';
   import { mutationTypes, editorDefaults } from '@/store/modules/editor';
-  import { mapState, mapMutations } from 'vuex';
+  import { editor, fontDialog, settingsDrawer } from '@/store/modules/moduleNames';
+  import { mapState, mapMutations, mapActions } from 'vuex';
   import MdDrawer from 'vue-material/dist/components/MdDrawer';
   import MdList from 'vue-material/dist/components/MdList';
   import MdIcon from 'vue-material/dist/components/MdIcon';
@@ -106,13 +106,18 @@
     components: {
       ChangeFontSize,
     },
-    computed: mapState('editor', [
-      'selectedLanguage',
-      'showMinimap',
-      'fontSize',
-      'currentTheme',
-      'renderWhitespace'
-    ]),
+    computed: {
+      ...mapState(editor, [
+        'selectedLanguage',
+        'showMinimap',
+        'fontSize',
+        'currentTheme',
+        'renderWhitespace'
+      ]),
+      ...mapState(settingsDrawer, {
+        showMenu: 'showDialog'
+      })
+    },
     data() {
       const editorLanguages = [];
       languages.getLanguages().forEach(({ id }) => editorLanguages.push(id));
@@ -126,19 +131,17 @@
         themes: themeNames.slice().sort()
       };
     },
-    mounted() {
-      EventBus.$on(Events.OPEN_SETTINGS_DRAWER, () => (this.menuVisible = true));
-    },
     methods: {
-      ...mapMutations('editor', [
+      ...mapMutations(editor, [
         mutationTypes.setLanguage,
         mutationTypes.toggleMinimap,
         mutationTypes.setEditorTheme,
         mutationTypes.toggleWhitespace
       ]),
-      openFontDialog() {
-        EventBus.$emit(Events.SHOW_FONT_DIALOG);
-      }
+      ...mapActions(fontDialog, {
+        openFontDialog: 'show'
+      }),
+      ...mapActions(settingsDrawer, ['hide'])
     }
   };
 

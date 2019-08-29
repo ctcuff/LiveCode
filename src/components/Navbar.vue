@@ -27,12 +27,13 @@
 
 <script>
   import Vue from 'vue';
-  import { EventBus, Events } from '@/util/eventBus';
   import MdButton from 'vue-material/dist/components/MdButton';
   import MdIcon from 'vue-material/dist/components/MdIcon';
   import MdToolbar from 'vue-material/dist/components/MdToolbar';
   import MdTooltip from 'vue-material/dist/components/MdTooltip';
   import WorkspaceIdDialog from '@/components/modal/WorkspaceIdDialog';
+  import { workspaceIdDialog, settingsDrawer } from '@/store/modules/moduleNames';
+  import { mapActions } from 'vuex';
 
   // Events fired when the site enters fullscreen
   const events = [
@@ -68,9 +69,12 @@
       });
     },
     methods: {
-      openMenu() {
-        EventBus.$emit(Events.OPEN_SETTINGS_DRAWER);
-      },
+      ...mapActions(workspaceIdDialog, {
+        openIdDialog: 'show'
+      }),
+      ...mapActions(settingsDrawer, {
+        openMenu: 'show'
+      }),
       toggleFullscreenIcon() {
         this.isFullScreen =
           document.fullScreen ||
@@ -96,9 +100,6 @@
             document.webkitCancelFullScreen();
           }
         }
-      },
-      openIdDialog() {
-        EventBus.$emit(Events.SHOW_ID_DIALOG);
       }
     }
   };

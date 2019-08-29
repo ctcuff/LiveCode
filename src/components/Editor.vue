@@ -8,6 +8,7 @@
   import { EventBus, Events } from '@/util/eventBus';
   import { mapState } from 'vuex';
   import { editorDefaults } from '@/store/modules/editor';
+  import { editor as editorNamespace } from '@/store/modules/moduleNames';
 
   let editor;
   const placeholderFunc = [
@@ -24,7 +25,7 @@
   );
 
   export default {
-    computed: mapState('editor', [
+    computed: mapState(editorNamespace, [
       'selectedLanguage',
       'fontSize',
       'showMinimap',

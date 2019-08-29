@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="show" :md-click-outside-to-close="false">
+    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false">
       <md-dialog-title>Indentation Style</md-dialog-title>
       <md-checkbox v-model="useTabs" class="md-primary">
         Indent using tabs<br />
@@ -15,7 +15,7 @@
         </md-select>
       </md-field>
       <md-dialog-actions>
-        <md-button class="md-primary" @click="show = false">Cancel</md-button>
+        <md-button class="md-primary" @click="hide">Cancel</md-button>
         <md-button class="md-primary" @click="updateIndentOptions">Save</md-button>
       </md-dialog-actions>
     </md-dialog>
@@ -28,8 +28,11 @@
   import MdButton from 'vue-material/dist/components/MdButton';
   import MdField from 'vue-material/dist/components/MdField';
   import MdCheckbox from 'vue-material/dist/components/MdCheckbox';
-  import { EventBus, Events } from '@/util/eventBus';
   import { mutationTypes } from '@/store/modules/editor';
+  import { mapActions, mapState, mapMutations } from 'vuex';
+  import { indentDialog, editor } from '@/store/modules/moduleNames';
+
+  const { setUseTabs, setIndentSize } = mutationTypes;
 
   Vue.use(MdDialog);
   Vue.use(MdButton);
@@ -39,20 +42,22 @@
   export default {
     data() {
       return {
-        show: false,
         useTabs: this.$store.state.editor.useTabs,
         selectedIndentSize: this.$store.state.editor.indentSize
       };
     },
-    mounted() {
-      EventBus.$on(Events.SHOW_INDENTATION_DIALOG, () => (this.show = true));
-    },
+    computed: mapState(indentDialog, ['showDialog']),
     methods: {
+      ...mapMutations(editor, [
+        setUseTabs,
+        setIndentSize
+      ]),
+      ...mapActions(indentDialog, ['hide']),
       updateIndentOptions() {
         this.show = false;
-        const { setUseTabs, setIndentSize } = mutationTypes;
-        this.$store.commit('editor/' + setUseTabs, this.useTabs);
-        this.$store.commit('editor/' + setIndentSize, this.selectedIndentSize);
+        this.setUseTabs(this.useTabs);
+        this.setIndentSize(this.selectedIndentSize);
+        this.hide();
       }
     }
   };

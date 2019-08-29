@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="show" :md-click-outside-to-close="false">
+    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false">
       <md-dialog-title>Change font size</md-dialog-title>
       <md-field :class="errorClass">
         <label>Font size (px)</label>
@@ -9,7 +9,7 @@
       </md-field>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="show = false">Cancel</md-button>
+        <md-button class="md-primary" @click="hide">Cancel</md-button>
         <md-button class="md-primary" @click="saveFontSize">Save</md-button>
       </md-dialog-actions>
     </md-dialog>
@@ -21,8 +21,9 @@
   import MdDialog from 'vue-material/dist/components/MdDialog';
   import MdButton from 'vue-material/dist/components/MdButton';
   import MdField from 'vue-material/dist/components/MdField';
-  import { EventBus, Events } from '@/util/eventBus';
   import { mutationTypes } from '@/store/modules/editor';
+  import { mapState, mapActions, mapMutations } from 'vuex';
+  import { fontDialog, editor } from '@/store/modules/moduleNames';
 
   const { setFontSize } = mutationTypes;
 
@@ -33,7 +34,6 @@
   export default {
     data() {
       return {
-        show: false,
         noError: null,
         inputText: this.$store.state.editor.fontSize,
         hasError: false,
@@ -41,14 +41,12 @@
       };
     },
     computed: {
+      ...mapState(fontDialog, ['showDialog']),
       errorClass() {
         return {
           'md-invalid': this.hasError
         };
-      }
-    },
-    mounted() {
-      EventBus.$on(Events.SHOW_FONT_DIALOG, () => (this.show = true));
+      },
     },
     watch: {
       inputText() {
@@ -56,6 +54,8 @@
       }
     },
     methods: {
+      ...mapActions(fontDialog, ['hide']),
+      ...mapMutations(editor, [setFontSize]),
       verifyFontSize() {
         const value = parseInt(this.inputText);
 
@@ -77,8 +77,8 @@
         if (!this.verifyFontSize()) {
           return;
         }
-        this.show = false;
-        this.$store.commit('editor/' + setFontSize, parseInt(this.inputText));
+        this.setFontSize(parseInt(this.inputText));
+        this.hide();
       }
     }
   };

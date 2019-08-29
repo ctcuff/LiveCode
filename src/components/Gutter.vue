@@ -30,11 +30,12 @@
 
 <script>
   import Vue from 'vue';
-  import { mapState } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
   import { EventBus, Events } from '@/util/eventBus';
   import { allThemes } from '@/util/editorThemes';
   import IndentationDialog from '@/components/modal/IndentaionDialog';
   import MdTooltip from 'vue-material/dist/components/MdTooltip';
+  import { editor, indentDialog } from '@/store/modules/moduleNames';
   // noinspection ES6CheckImport
   import { gutterDark, gutterLight } from '@/assets/scss/_gutter.scss';
 
@@ -54,23 +55,23 @@
       };
     },
     computed: {
-      ...mapState('editor', {
+      ...mapState(editor, {
         selectedLanguage: state => {
           // Capitalize the first letter of the language
           const lang = state.selectedLanguage;
           return lang.charAt(0).toUpperCase() + lang.slice(1);
         }
       }),
-      ...mapState('editor', [
+      ...mapState(editor, [
         'currentTheme',
         'indentSize',
         'useTabs'
       ])
     },
     methods: {
-      showIndentDialog() {
-        EventBus.$emit(Events.SHOW_INDENTATION_DIALOG);
-      }
+      ...mapActions(indentDialog, {
+        showIndentDialog: 'show'
+      })
     },
     watch: {
       currentTheme(selectedTheme) {

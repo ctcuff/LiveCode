@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="show">
+    <md-dialog :md-active.sync="showDialog">
       <md-dialog-title>
         <md-icon>info</md-icon>
         Workspace ID
@@ -14,7 +14,7 @@
         <p>Share this with others so they can connect to your editor</p>
       </div>
       <md-dialog-actions>
-        <md-button class="md-primary" @click="show = false">Close</md-button>
+        <md-button class="md-primary" @click="hide">Close</md-button>
         <md-button class="md-primary" @click="copyToClipboard">
           Copy
           <md-tooltip>Copy to clipboard</md-tooltip>
@@ -39,7 +39,8 @@
   import MdDialog from 'vue-material/dist/components/MdDialog';
   import MdTooltip from 'vue-material/dist/components/MdTooltip';
   import MdSnackbar from 'vue-material/dist/components/MdSnackbar';
-  import { EventBus, Events } from '@/util/eventBus';
+  import { mapState, mapActions } from 'vuex';
+  import { workspaceIdDialog } from '@/store/modules/moduleNames';
 
   Vue.use(MdButton);
   Vue.use(MdDialog);
@@ -49,15 +50,13 @@
   export default {
     data() {
       return {
-        show: false,
         showSnackbar: false,
         workspaceId: this.$root.workspaceId
       };
     },
-    mounted() {
-      EventBus.$on(Events.SHOW_ID_DIALOG, () => (this.show = true));
-    },
+    computed: mapState(workspaceIdDialog, ['showDialog']),
     methods: {
+      ...mapActions(workspaceIdDialog, ['hide']),
       fallbackCopyToClipboard() {
         const textArea = document.createElement("textarea");
         textArea.value = this.workspaceId;
@@ -68,7 +67,7 @@
         try {
           document.execCommand('copy');
           this.showSnackbar = true;
-          this.show = false;
+          this.hide();
         } catch (err) {
           console.error('Fallback: Oops, unable to copy', err);
         }
@@ -83,7 +82,7 @@
         navigator.clipboard.writeText(this.workspaceId)
           .then(() => {
             this.showSnackbar = true;
-            this.show = false;
+            this.hide();
           })
           .catch(err => console.log(err));
       }
