@@ -1,0 +1,216 @@
+<template>
+  <md-drawer :md-active.sync="menuVisible" md-persistent="full">
+    <md-toolbar md-elevation="0">
+      <span>Settings</span>
+      <div class="md-toolbar-section-end">
+        <md-button class="md-icon-button md-dense" @click="menuVisible = false">
+          <md-icon>keyboard_arrow_left</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-list class="md-double-line">
+      <md-menu md-size="medium">
+
+        <!--
+        Give the menu-item an empty click listener so it
+        renders as a button and gets the ripple effect
+        -->
+        <md-list-item @click="() => {}" md-menu-trigger>
+          <md-icon>code</md-icon>
+          <div class="md-list-item-text">
+            <span>Language</span>
+            <span>Current: {{selectedLanguage}}</span>
+          </div>
+          <md-menu-content>
+            <md-menu-item
+                v-for="lang in editorLanguages"
+                :key="lang"
+                @click="setLanguage(lang)"
+            >
+              {{lang}}
+            </md-menu-item>
+          </md-menu-content>
+        </md-list-item>
+      </md-menu>
+
+
+      <md-list-item @click="openFontDialog">
+          <md-icon>text_fields</md-icon>
+          <div class="md-list-item-text">
+            <span>Font size</span>
+            <span>Current: {{currentFontSize}}px | Default: {{defaultFontSize}}px</span>
+          </div>
+          <ChangeFontSize />
+        </md-list-item>
+
+        <md-list-item @click="toggleMinimap">
+          <md-icon>map</md-icon>
+          <div class="md-list-item-text">
+            <span>Toggle minimap</span>
+            <span>Minimap is {{showMinimap ? 'showing' : 'hidden'}}</span>
+          </div>
+        </md-list-item>
+
+      <md-menu md-size="medium">
+        <md-list-item @click="() => {}" md-menu-trigger>
+          <md-icon>color_lens</md-icon>
+          <div class="md-list-item-text">
+            <span>Change theme</span>
+            <span>Current: {{currentTheme}}</span>
+          </div>
+          <md-menu-content>
+            <md-menu-item
+                v-for="theme in themes"
+                :key="theme"
+                @click="setTheme(theme)"
+            >
+              {{theme}}
+            </md-menu-item>
+          </md-menu-content>
+        </md-list-item>
+      </md-menu>
+
+      <md-list-item @click="toggleWhitespace">
+        <md-icon>settings_ethernet</md-icon>
+        <div class="md-list-item-text">
+          <span>Render whitespace</span>
+          <span>Whitespace will be {{renderWhitespace ? 'shown' : 'hidden'}}</span>
+        </div>
+      </md-list-item>
+
+    </md-list>
+  </md-drawer>
+</template>
+
+<script>
+  import Vue from 'vue';
+  import { EventBus, Events } from '@/util/eventBus';
+  import editorStore from '@/store/editorConfig';
+  import MdDrawer from 'vue-material/dist/components/MdDrawer';
+  import MdList from 'vue-material/dist/components/MdList';
+  import MdIcon from 'vue-material/dist/components/MdIcon';
+  import MdToolbar from 'vue-material/dist/components/MdToolbar';
+  import MdMenu from 'vue-material/dist/components/MdMenu';
+  import { languages } from 'monaco-editor';
+  import ChangeFontSize from '@/components/modal/ChangeFontSize';
+
+
+  Vue.use(MdDrawer);
+  Vue.use(MdList);
+  Vue.use(MdIcon);
+  Vue.use(MdToolbar);
+  Vue.use(MdMenu);
+
+  export default {
+    components: {
+      ChangeFontSize,
+    },
+    computed: {
+      selectedLanguage() {
+        return editorStore.state.selectedLanguage;
+      },
+      showMinimap() {
+        return editorStore.state.showMinimap;
+      },
+      currentFontSize() {
+        return editorStore.state.fontSize;
+      },
+      currentTheme() {
+        return editorStore.state.currentTheme;
+      },
+      renderWhitespace() {
+        return editorStore.state.renderWhitespace;
+      }
+    },
+    data() {
+      const editorLanguages = [];
+      languages.getLanguages().forEach(({ id }) => editorLanguages.push(id));
+      editorLanguages.sort();
+
+      return {
+        editorLanguages,
+        menuVisible: false,
+        defaultFontSize: editorStore.state.defaults.fontSize,
+        defaultTheme: editorStore.state.defaults.theme,
+        themes: editorStore.state.defaults.themes.slice().sort()
+      };
+    },
+    mounted() {
+      EventBus.$on(Events.OPEN_SETTINGS_DRAWER, () => (this.menuVisible = true));
+    },
+    methods: {
+      setLanguage(language) {
+        editorStore.commit('setLanguage', language);
+      },
+      toggleMinimap() {
+        editorStore.commit('toggleMinimap');
+      },
+      openFontDialog() {
+        console.log('Clicked');
+        EventBus.$emit(Events.SHOW_FONT_DIALOG);
+      },
+      setTheme(theme) {
+        editorStore.commit('setEditorTheme', theme);
+      },
+      toggleWhitespace() {
+        editorStore.commit('toggleWhitespace');
+      }
+    }
+  };
+
+</script>
+
+<style lang="scss" scoped>
+  $text-color: #b9b9b9;
+  $bg-color: #252526;
+  $drawer-font-size: 17px;
+
+  .md-drawer {
+    width: 245px;
+
+    &.md-theme-default {
+      background-color: #252526;
+    }
+  }
+
+  .md-list-item {
+    cursor: pointer;
+  }
+
+
+  .md-list-item-text {
+    & span {
+      color: $text-color !important;
+      font-size: 12px;
+    }
+
+    & span:nth-child(1) {
+      font-size: $drawer-font-size;
+    }
+  }
+
+  .md-list.md-theme-default {
+    background-color: #252526;
+    color: $text-color;
+  }
+
+  .md-toolbar {
+    margin-top: 8px;
+    height: 40px;
+    min-height: 40px;
+
+    &.md-theme-default {
+      color: $text-color;
+      background-color: $bg-color;
+      font-size: $drawer-font-size;
+    }
+  }
+
+  .md-icon.md-theme-default.md-icon-font {
+    color: $text-color;
+  }
+
+  .md-list.md-theme-default .md-list-item-container {
+    color: $text-color;
+  }
+</style>

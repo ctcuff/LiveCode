@@ -1,0 +1,9 @@
+@import "navbar";
+$gutter-dark: $navbar-color;
+$gutter-light: #007acc;
+$gutter-height: 20px;
+
+:export {
+  gutterDark: $gutter-dark;
+  gutterLight: $gutter-light;
+}
