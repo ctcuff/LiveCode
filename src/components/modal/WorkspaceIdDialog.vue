@@ -51,7 +51,7 @@
       return {
         show: false,
         showSnackbar: false,
-        workspaceId: this.$root.$workspaceId
+        workspaceId: this.$root.workspaceId
       };
     },
     mounted() {

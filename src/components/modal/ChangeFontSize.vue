@@ -22,7 +22,9 @@
   import MdButton from 'vue-material/dist/components/MdButton';
   import MdField from 'vue-material/dist/components/MdField';
   import { EventBus, Events } from '@/util/eventBus';
-  import editorStore from '@/store/editorConfig';
+  import { mutationTypes } from '@/store/modules/editor';
+
+  const { setFontSize } = mutationTypes;
 
   Vue.use(MdDialog);
   Vue.use(MdButton);
@@ -33,7 +35,7 @@
       return {
         show: false,
         noError: null,
-        inputText: editorStore.state.fontSize,
+        inputText: this.$store.state.editor.fontSize,
         hasError: false,
         errorMessage: null
       };
@@ -76,7 +78,7 @@
           return;
         }
         this.show = false;
-        editorStore.commit('setFontSize', parseInt(this.inputText));
+        this.$store.commit('editor/' + setFontSize, parseInt(this.inputText));
       }
     }
   };
@@ -85,5 +87,9 @@
 <style lang="scss" scoped>
   .md-dialog.md-theme-default {
     padding: 0 16px;
+  }
+
+  .md-dialog-title {
+    padding: 24px 24px 0 0;
   }
 </style>

@@ -3,7 +3,7 @@
     <md-dialog :md-active.sync="show" :md-click-outside-to-close="false">
       <md-dialog-title>Indentation Style</md-dialog-title>
       <md-checkbox v-model="useTabs" class="md-primary">
-        Indent using tabs<br/>
+        Indent using tabs<br />
         <small>The editor will use {{useTabs ? 'tabs': 'spaces'}} as indentation</small>
       </md-checkbox>
       <md-field>
@@ -29,7 +29,7 @@
   import MdField from 'vue-material/dist/components/MdField';
   import MdCheckbox from 'vue-material/dist/components/MdCheckbox';
   import { EventBus, Events } from '@/util/eventBus';
-  import editorStore from '@/store/editorConfig';
+  import { mutationTypes } from '@/store/modules/editor';
 
   Vue.use(MdDialog);
   Vue.use(MdButton);
@@ -40,8 +40,8 @@
     data() {
       return {
         show: false,
-        useTabs: editorStore.state.useTabs,
-        selectedIndentSize: editorStore.state.indentSize
+        useTabs: this.$store.state.editor.useTabs,
+        selectedIndentSize: this.$store.state.editor.indentSize
       };
     },
     mounted() {
@@ -50,8 +50,9 @@
     methods: {
       updateIndentOptions() {
         this.show = false;
-        editorStore.commit('setUseTabs', this.useTabs);
-        editorStore.commit('setIndentSize', this.selectedIndentSize);
+        const { setUseTabs, setIndentSize } = mutationTypes;
+        this.$store.commit('editor/' + setUseTabs, this.useTabs);
+        this.$store.commit('editor/' + setIndentSize, this.selectedIndentSize);
       }
     }
   };

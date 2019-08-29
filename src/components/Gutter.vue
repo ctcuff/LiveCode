@@ -30,7 +30,7 @@
 
 <script>
   import Vue from 'vue';
-  import editorStore from '@/store/editorConfig';
+  import { mapState } from 'vuex';
   import { EventBus, Events } from '@/util/eventBus';
   import { allThemes } from '@/util/editorThemes';
   import IndentationDialog from '@/components/modal/IndentaionDialog';
@@ -54,20 +54,18 @@
       };
     },
     computed: {
-      selectedLanguage() {
-        const lang = editorStore.state.selectedLanguage;
-        // Capitalize the first letter
-        return lang.charAt(0).toUpperCase() + lang.slice(1);
-      },
-      currentTheme() {
-        return editorStore.state.currentTheme;
-      },
-      indentSize() {
-        return editorStore.state.indentSize;
-      },
-      useTabs() {
-        return editorStore.state.useTabs;
-      }
+      ...mapState('editor', {
+        selectedLanguage: state => {
+          // Capitalize the first letter of the language
+          const lang = state.selectedLanguage;
+          return lang.charAt(0).toUpperCase() + lang.slice(1);
+        }
+      }),
+      ...mapState('editor', [
+        'currentTheme',
+        'indentSize',
+        'useTabs'
+      ])
     },
     methods: {
       showIndentDialog() {

@@ -4,9 +4,10 @@
 
 <script>
   import * as monaco from 'monaco-editor';
-  import editorStore from '@/store/editorConfig';
   import { allThemes } from '@/util/editorThemes';
   import { EventBus, Events } from '@/util/eventBus';
+  import { mapState } from 'vuex';
+  import editorDefaults from '@/store/modules/editorDefaults';
 
   let editor;
   const placeholderFunc = [
@@ -19,33 +20,19 @@
 
   const model = monaco.editor.createModel(
     placeholderFunc.join('\n'),
-    editorStore.state.defaults.selectedLanguage,
+    editorDefaults.selectedLanguage,
   );
 
   export default {
-    computed: {
-      selectedLanguage() {
-        return editorStore.state.selectedLanguage;
-      },
-      fontSize() {
-        return editorStore.state.fontSize;
-      },
-      showMinimap() {
-        return editorStore.state.showMinimap;
-      },
-      currentTheme() {
-        return editorStore.state.currentTheme;
-      },
-      renderWhitespace() {
-        return editorStore.state.renderWhitespace;
-      },
-      indentSize() {
-        return editorStore.state.indentSize;
-      },
-      toggleTabs() {
-        return editorStore.state.useTabs;
-      }
-    },
+    computed: mapState('editor', [
+      'selectedLanguage',
+      'fontSize',
+      'showMinimap',
+      'currentTheme',
+      'renderWhitespace',
+      'indentSize',
+      'useTabs'
+    ]),
     watch: {
       selectedLanguage(language) {
         monaco.editor.setModelLanguage(editor.getModel(model.uri), language);
@@ -69,8 +56,8 @@
       indentSize(tabSize) {
         editor.getModel(model.uri).updateOptions({ tabSize });
       },
-      toggleTabs(useTabs) {
-        editor.getModel(model.uri).updateOptions({ insertSpaces: !useTabs });
+      useTabs(tabs) {
+        editor.getModel(model.uri).updateOptions({ insertSpaces: !tabs });
       }
     },
     mounted() {
@@ -84,16 +71,16 @@
       });
 
       model.updateOptions({
-        tabSize: editorStore.state.tabSize,
-        insertSpaces: !editorStore.state.useTabs,
+        tabSize: this.tabSize,
+        insertSpaces: !this.useTabs,
       });
 
       editor = monaco.editor.create(document.getElementById('editor'), {
         model,
-        theme: editorStore.state.theme,
-        fontSize: editorStore.state.fontSize,
+        theme: this.currentTheme,
+        fontSize: this.fontSize,
         automaticLayout: true,
-        renderWhitespace: editorStore.state.renderWhitespace ? 'boundary' : 'none',
+        renderWhitespace: this.renderWhitespace ? 'boundary' : 'none',
         autoClosingBrackets: 'always'
       });
 

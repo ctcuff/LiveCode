@@ -35,21 +35,21 @@
 
 
       <md-list-item @click="openFontDialog">
-          <md-icon>text_fields</md-icon>
-          <div class="md-list-item-text">
-            <span>Font size</span>
-            <span>Current: {{currentFontSize}}px | Default: {{defaultFontSize}}px</span>
-          </div>
-          <ChangeFontSize />
-        </md-list-item>
+        <md-icon>text_fields</md-icon>
+        <div class="md-list-item-text">
+          <span>Font size</span>
+          <span>Current: {{fontSize}}px | Default: {{defaultFontSize}}px</span>
+        </div>
+        <ChangeFontSize />
+      </md-list-item>
 
-        <md-list-item @click="toggleMinimap">
-          <md-icon>map</md-icon>
-          <div class="md-list-item-text">
-            <span>Toggle minimap</span>
-            <span>Minimap is {{showMinimap ? 'showing' : 'hidden'}}</span>
-          </div>
-        </md-list-item>
+      <md-list-item @click="toggleMinimap">
+        <md-icon>map</md-icon>
+        <div class="md-list-item-text">
+          <span>Toggle minimap</span>
+          <span>Minimap is {{showMinimap ? 'showing' : 'hidden'}}</span>
+        </div>
+      </md-list-item>
 
       <md-menu md-size="medium">
         <md-list-item @click="() => {}" md-menu-trigger>
@@ -62,7 +62,7 @@
             <md-menu-item
                 v-for="theme in themes"
                 :key="theme"
-                @click="setTheme(theme)"
+                @click="setEditorTheme(theme)"
             >
               {{theme}}
             </md-menu-item>
@@ -85,15 +85,17 @@
 <script>
   import Vue from 'vue';
   import { EventBus, Events } from '@/util/eventBus';
-  import editorStore from '@/store/editorConfig';
+  import { mutationTypes } from '@/store/modules/editor';
+  import { mapState, mapMutations } from 'vuex';
+  import editorDefaults from '@/store/modules/editorDefaults';
   import MdDrawer from 'vue-material/dist/components/MdDrawer';
   import MdList from 'vue-material/dist/components/MdList';
   import MdIcon from 'vue-material/dist/components/MdIcon';
   import MdToolbar from 'vue-material/dist/components/MdToolbar';
   import MdMenu from 'vue-material/dist/components/MdMenu';
   import { languages } from 'monaco-editor';
+  import { themeNames } from '@/util/editorThemes';
   import ChangeFontSize from '@/components/modal/ChangeFontSize';
-
 
   Vue.use(MdDrawer);
   Vue.use(MdList);
@@ -105,23 +107,13 @@
     components: {
       ChangeFontSize,
     },
-    computed: {
-      selectedLanguage() {
-        return editorStore.state.selectedLanguage;
-      },
-      showMinimap() {
-        return editorStore.state.showMinimap;
-      },
-      currentFontSize() {
-        return editorStore.state.fontSize;
-      },
-      currentTheme() {
-        return editorStore.state.currentTheme;
-      },
-      renderWhitespace() {
-        return editorStore.state.renderWhitespace;
-      }
-    },
+    computed: mapState('editor', [
+      'selectedLanguage',
+      'showMinimap',
+      'fontSize',
+      'currentTheme',
+      'renderWhitespace'
+    ]),
     data() {
       const editorLanguages = [];
       languages.getLanguages().forEach(({ id }) => editorLanguages.push(id));
@@ -130,30 +122,23 @@
       return {
         editorLanguages,
         menuVisible: false,
-        defaultFontSize: editorStore.state.defaults.fontSize,
-        defaultTheme: editorStore.state.defaults.theme,
-        themes: editorStore.state.defaults.themes.slice().sort()
+        defaultFontSize: editorDefaults.fontSize,
+        defaultTheme: editorDefaults.theme,
+        themes: themeNames.slice().sort()
       };
     },
     mounted() {
       EventBus.$on(Events.OPEN_SETTINGS_DRAWER, () => (this.menuVisible = true));
     },
     methods: {
-      setLanguage(language) {
-        editorStore.commit('setLanguage', language);
-      },
-      toggleMinimap() {
-        editorStore.commit('toggleMinimap');
-      },
+      ...mapMutations('editor', [
+        mutationTypes.setLanguage,
+        mutationTypes.toggleMinimap,
+        mutationTypes.setEditorTheme,
+        mutationTypes.toggleWhitespace
+      ]),
       openFontDialog() {
-        console.log('Clicked');
         EventBus.$emit(Events.SHOW_FONT_DIALOG);
-      },
-      setTheme(theme) {
-        editorStore.commit('setEditorTheme', theme);
-      },
-      toggleWhitespace() {
-        editorStore.commit('toggleWhitespace');
       }
     }
   };
