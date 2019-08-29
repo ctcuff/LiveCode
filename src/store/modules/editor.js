@@ -1,5 +1,3 @@
-import editorDefaults from '@/store/modules/editorDefaults';
-
 // Takes a property (from the state) returns a function
 // that sets that property's value
 const createSetter = property => (state, value) => {
@@ -19,6 +17,16 @@ const mutationTypes = {
   setUseTabs: 'setUseTabs',
   setIndentSize: 'setIndentSize'
 };
+const editorDefaults = {
+  selectedLanguage: 'python',
+  fontSize: 14,
+  showMinimap: true,
+  theme: 'vs-dark',
+  currentTheme: 'vs-dark',
+  renderWhitespace: true,
+  indentSize: 4,
+  useTabs: true
+};
 
 const editor = {
   namespaced: true,
@@ -34,4 +42,4 @@ const editor = {
   }
 };
 
-export { editor as default, mutationTypes };
+export { editor as default, mutationTypes, editorDefaults };

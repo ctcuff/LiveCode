@@ -7,7 +7,7 @@
   import { allThemes } from '@/util/editorThemes';
   import { EventBus, Events } from '@/util/eventBus';
   import { mapState } from 'vuex';
-  import editorDefaults from '@/store/modules/editorDefaults';
+  import { editorDefaults } from '@/store/modules/editor';
 
   let editor;
   const placeholderFunc = [

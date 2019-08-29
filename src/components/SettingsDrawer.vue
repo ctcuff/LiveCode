@@ -85,9 +85,8 @@
 <script>
   import Vue from 'vue';
   import { EventBus, Events } from '@/util/eventBus';
-  import { mutationTypes } from '@/store/modules/editor';
+  import { mutationTypes, editorDefaults } from '@/store/modules/editor';
   import { mapState, mapMutations } from 'vuex';
-  import editorDefaults from '@/store/modules/editorDefaults';
   import MdDrawer from 'vue-material/dist/components/MdDrawer';
   import MdList from 'vue-material/dist/components/MdList';
   import MdIcon from 'vue-material/dist/components/MdIcon';
