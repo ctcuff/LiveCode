@@ -13,13 +13,13 @@
       </div>
 
       <span id="lang" class="editor-info">{{ selectedLanguage }}</span>
-      <span class="editor-info" id="file-size">{{contentSizeInBytes}} Bytes</span>
+      <span class="editor-info" id="file-size">{{formatContentSize()}}</span>
       <span
           id="indentation-type"
           class="editor-info"
+          title="Click to change"
           @click="showIndentDialog"
       >
-        <md-tooltip md-direction="top">Click to change</md-tooltip>
         {{useTabs ? 'Tab Width' : 'Spaces'}}: {{indentSize}}
       </span>
     </div>
@@ -64,7 +64,18 @@
     methods: {
       ...mapActions(indentDialog, {
         showIndentDialog: 'show'
-      })
+      }),
+      formatContentSize() {
+        const bytes = this.contentSizeInBytes;
+        if (bytes === 0) {
+          return '0 Bytes';
+        }
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
     },
     mounted() {
       this.$store.watch(
@@ -112,7 +123,7 @@
     font-size: 14px;
     color: white;
 
-    @media screen and (max-width: 330px) {
+    @media screen and (max-width: 500px) {
       display: none;
     }
   }
@@ -129,12 +140,10 @@
 
     & span {
       flex: 1;
-      font-weight: 600;
     }
   }
 
   #indentation-type {
     cursor: pointer;
   }
-
 </style>
