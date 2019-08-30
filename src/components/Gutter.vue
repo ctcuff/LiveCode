@@ -1,19 +1,19 @@
 <template>
   <div>
     <div id="gutter" ref="gutter">
-      <div class="line-info" v-if="charactersSelected > 0 || linesSelected > 0">
-        <span v-if="charactersSelected > 0">
-          {{charactersSelected}} chars<span v-if="linesSelected > 0">,</span>
+      <div class="line-info" v-if="selection.chars > 0 || selection.lines > 0">
+        <span v-if="selection.chars > 0">
+          {{selection.chars}} chars<span v-if="selection.lines > 0">,</span>
         </span>
-        <span v-if="linesSelected > 0">{{linesSelected}} lines</span>
+        <span v-if="selection.lines > 0">{{selection.lines}} lines</span>
       </div>
       <div class="line-info" v-else>
-        <span>Line {{currentLine}},</span>
-        <span>Column {{currentCol}}</span>
+        <span>Line {{cursorPosition.line}},</span>
+        <span>Column {{cursorPosition.col}}</span>
       </div>
 
       <span id="lang" class="editor-info">{{ selectedLanguage }}</span>
-      <span class="editor-info" id="file-size">{{fileSize}} Bytes</span>
+      <span class="editor-info" id="file-size">{{contentSizeInBytes}} Bytes</span>
       <span
           id="indentation-type"
           class="editor-info"
@@ -30,8 +30,7 @@
 
 <script>
   import Vue from 'vue';
-  import { mapState, mapActions } from 'vuex';
-  import { EventBus, Events } from '@/util/eventBus';
+  import { mapState, mapActions, mapGetters } from 'vuex';
   import { allThemes } from '@/util/editorThemes';
   import IndentationDialog from '@/components/modal/IndentaionDialog';
   import MdTooltip from 'vue-material/dist/components/MdTooltip';
@@ -45,15 +44,6 @@
     components: {
       IndentationDialog
     },
-    data() {
-      return {
-        currentLine: 1,
-        currentCol: 1,
-        linesSelected: 0,
-        charactersSelected: 0,
-        fileSize: 0
-      };
-    },
     computed: {
       ...mapState(editor, {
         selectedLanguage: state => {
@@ -65,33 +55,26 @@
       ...mapState(editor, [
         'currentTheme',
         'indentSize',
-        'useTabs'
-      ])
+        'useTabs',
+        'cursorPosition',
+        'selection'
+      ]),
+      ...mapGetters(editor, ['contentSizeInBytes'])
     },
     methods: {
       ...mapActions(indentDialog, {
         showIndentDialog: 'show'
       })
     },
-    watch: {
-      currentTheme(selectedTheme) {
-        this.$refs.gutter.style.backgroundColor = allThemes[selectedTheme].isLight
-          ? gutterDark
-          : gutterLight;
-      }
-    },
     mounted() {
-      EventBus.$on(Events.UPDATE_CURSOR_POSITION, ({ lineNumber, column }) => {
-        this.currentLine = lineNumber;
-        this.currentCol = column;
-      });
-
-      EventBus.$on(Events.CHARACTER_SELECTION_CHANGE, ({ linesSelected, charactersSelected }) => {
-        this.linesSelected = linesSelected;
-        this.charactersSelected = charactersSelected;
-      });
-
-      EventBus.$on(Events.ON_TEXT_CONTENT_CHANGE, bytes => (this.fileSize = bytes));
+      this.$store.watch(
+        state => state.editor.currentTheme,
+        theme => {
+          this.$refs.gutter.style.backgroundColor = allThemes[theme].isLight
+            ? gutterDark
+            : gutterLight;
+        }
+      );
     }
   };
 </script>

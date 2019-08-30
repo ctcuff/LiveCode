@@ -5,22 +5,13 @@
 <script>
   import * as monaco from 'monaco-editor';
   import { allThemes } from '@/util/editorThemes';
-  import { EventBus, Events } from '@/util/eventBus';
-  import { mapState } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
   import { editorDefaults } from '@/store/modules/editor';
   import { editor as editorNamespace } from '@/store/modules/moduleNames';
 
   let editor;
-  const placeholderFunc = [
-    "def say_hello():",
-    "\tprint('Hello, World!')",
-    "\n",
-    "if __name__ == '__main__':",
-    "\tsay_hello()"
-  ];
-
   const model = monaco.editor.createModel(
-    placeholderFunc.join('\n'),
+    editorDefaults.content,
     editorDefaults.selectedLanguage,
   );
 
@@ -34,6 +25,13 @@
       'indentSize',
       'useTabs'
     ]),
+    methods: {
+      ...mapActions(editorNamespace, [
+        'updateEditorContent',
+        'updateSelection',
+        'updateCursorPosition'
+      ])
+    },
     watch: {
       selectedLanguage(language) {
         monaco.editor.setModelLanguage(editor.getModel(model.uri), language);
@@ -64,7 +62,7 @@
     mounted() {
       Object.keys(allThemes).forEach(themeName => {
         // If the theme data is null, that means it's a default
-        // theme that came with the editor
+        // theme that came with monaco
         const themeData = allThemes[themeName].themeData;
         if (themeData) {
           monaco.editor.defineTheme(themeName, themeData);
@@ -85,11 +83,6 @@
         autoClosingBrackets: 'always'
       });
 
-      EventBus.$emit(
-        Events.ON_TEXT_CONTENT_CHANGE,
-        editor.getValue().split('').length
-      );
-
       // Used to give a line of space before the
       // 1st line of the editor
       editor.changeViewZones(changeAccessor => {
@@ -100,12 +93,13 @@
         });
       });
 
-      // Updates the line/col position in the Gutter component
       editor.onDidChangeCursorPosition(({ position: { lineNumber, column } }) => {
-        EventBus.$emit(Events.UPDATE_CURSOR_POSITION, { lineNumber, column });
+        this.updateCursorPosition({
+          line: lineNumber,
+          col: column
+        });
       });
 
-      // Updates the text selection in the Gutter component
       editor.onDidChangeCursorSelection(({ selection }) => {
         const linesSelected = selection.endLineNumber - selection.startLineNumber;
         const charactersSelected = model
@@ -113,18 +107,14 @@
           .split('')
           .length;
 
-        EventBus.$emit(Events.CHARACTER_SELECTION_CHANGE, {
-          linesSelected,
-          charactersSelected
+        this.updateSelection({
+          lines: linesSelected,
+          chars: charactersSelected
         });
       });
 
-      // Update the editor content byte size in the Gutter component
       editor.onKeyUp(() => {
-        EventBus.$emit(
-          Events.ON_TEXT_CONTENT_CHANGE,
-          editor.getValue().split('').length
-        );
+        this.updateEditorContent(editor.getValue());
       });
     }
   };
