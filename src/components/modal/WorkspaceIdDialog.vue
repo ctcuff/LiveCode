@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog">
+    <md-dialog :md-active.sync="showDialog" :md-fullscreen="false" :md-click-outside-to-close="false">
       <md-dialog-title>
         <md-icon>info</md-icon>
         Workspace ID
@@ -51,7 +51,7 @@
     data() {
       return {
         showSnackbar: false,
-        workspaceId: this.$root.workspaceId
+        workspaceId: this.$root.workspaceId,
       };
     },
     computed: mapState(workspaceIdDialog, ['showDialog']),

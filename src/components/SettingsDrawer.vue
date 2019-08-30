@@ -95,6 +95,7 @@
       </md-list-item>
 
     </md-list>
+
   </md-drawer>
 </template>
 
@@ -138,7 +139,6 @@
     },
     data() {
       const editorLanguages = [];
-      console.log(JSON.stringify(languages.getLanguages(), null, 2));
       languages.getLanguages().forEach(({ id }) => editorLanguages.push(id));
       editorLanguages.sort();
 

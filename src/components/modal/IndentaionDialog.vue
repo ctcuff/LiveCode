@@ -1,10 +1,9 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false">
+    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false" :md-fullscreen="false">
       <md-dialog-title>Indentation Style</md-dialog-title>
       <md-checkbox v-model="useTabs" class="md-primary">
         Indent using tabs<br />
-        <small>The editor will use {{useTabs ? 'tabs': 'spaces'}} as indentation</small>
       </md-checkbox>
       <md-field>
         <label>Indent size</label>
@@ -70,5 +69,9 @@
 
   .md-checkbox {
     margin: 16px 16px 24px 0;
+  }
+
+  .md-dialog-title {
+    padding: 24px 24px 0 0;
   }
 </style>

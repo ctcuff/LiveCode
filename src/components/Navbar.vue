@@ -10,7 +10,7 @@
     </md-button>
 
     <md-button class="md-icon-button" @click="() => {}" title="Connect to workspace">
-      <md-icon>people_alt</md-icon>
+      <md-icon>meeting_room</md-icon>
     </md-button>
 
     <md-button class="md-icon-button" @click="openIdDialog" title="View workspace id">
