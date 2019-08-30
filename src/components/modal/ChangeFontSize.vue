@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false">
+    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false" :md-fullscreen="false">
       <md-dialog-title>Change font size</md-dialog-title>
       <md-field :class="errorClass">
         <label>Font size (px)</label>
