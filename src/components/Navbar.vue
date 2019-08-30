@@ -1,24 +1,20 @@
 <template>
   <md-toolbar md-elevation="0">
-    <md-button class="md-icon-button" @click="openMenu">
+    <md-button class="md-icon-button" @click="openMenu" title="Settings">
       <md-icon>settings</md-icon>
-      <md-tooltip>Settings</md-tooltip>
     </md-button>
 
-    <md-button class="md-icon-button" @click="toggleFullscreen">
+    <md-button class="md-icon-button" @click="toggleFullscreen" title="Toggle fullscreen">
       <md-icon v-if="isFullScreen">fullscreen_exit</md-icon>
       <md-icon v-else>fullscreen</md-icon>
-      <md-tooltip>Toggle fullscreen</md-tooltip>
     </md-button>
 
-    <md-button class="md-icon-button" @click="() => {}">
+    <md-button class="md-icon-button" @click="() => {}" title="Connect to workspace">
       <md-icon>people_alt</md-icon>
-      <md-tooltip>Connect to workspace</md-tooltip>
     </md-button>
 
-    <md-button class="md-icon-button" @click="openIdDialog">
+    <md-button class="md-icon-button" @click="openIdDialog" title="View workspace id">
       <md-icon>info</md-icon>
-      <md-tooltip>View workspace id</md-tooltip>
       <WorkspaceIdDialog />
     </md-button>
 
@@ -30,7 +26,6 @@
   import MdButton from 'vue-material/dist/components/MdButton';
   import MdIcon from 'vue-material/dist/components/MdIcon';
   import MdToolbar from 'vue-material/dist/components/MdToolbar';
-  import MdTooltip from 'vue-material/dist/components/MdTooltip';
   import WorkspaceIdDialog from '@/components/modal/WorkspaceIdDialog';
   import { workspaceIdDialog, settingsDrawer } from '@/store/modules/moduleNames';
   import { mapActions } from 'vuex';
@@ -46,7 +41,6 @@
   Vue.use(MdButton);
   Vue.use(MdIcon);
   Vue.use(MdToolbar);
-  Vue.use(MdTooltip);
 
   export default {
     components: {
