@@ -17,7 +17,7 @@ const mutationTypes = {
 };
 
 const editorDefaults = {
-  selectedLanguage: 'python',
+  selectedLanguage: 'markdown',
   fontSize: 14,
   showMinimap: true,
   theme: 'vs-dark',
@@ -25,13 +25,16 @@ const editorDefaults = {
   renderWhitespace: true,
   indentSize: 4,
   useTabs: true,
-  content: [
-    "def say_hello():",
-    "\tprint('Hello, World!')",
-    "\n",
-    "if __name__ == '__main__':",
-    "\tsay_hello()"
-  ].join('\n'),
+  content: '# LiveCode\n' +
+    '\n' +
+    'Welcome to LiveCode! This is an online text editor that supports\n' +
+    'the highlighting of multiple languages. To change the current syntax\n' +
+    'highlighting, click settings, language, than take your pick.\n' +
+    '\n' +
+    'To share you workspace with someone, click the _info_ icon to the\n' +
+    'right on the navbar and give them your workspace id.\n' +
+    '\n' +
+    'Happy editing!',
   selection: {
     lines: 0,
     chars: 0
