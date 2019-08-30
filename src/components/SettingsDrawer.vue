@@ -43,14 +43,6 @@
         <ChangeFontSize />
       </md-list-item>
 
-      <md-list-item @click="toggleMinimap">
-        <md-icon>map</md-icon>
-        <div class="md-list-item-text">
-          <span>Toggle minimap</span>
-          <span>Minimap is {{showMinimap ? 'showing' : 'hidden'}}</span>
-        </div>
-      </md-list-item>
-
       <md-menu md-size="medium">
         <md-list-item @click="() => {}" md-menu-trigger>
           <md-icon>color_lens</md-icon>
@@ -70,11 +62,35 @@
         </md-list-item>
       </md-menu>
 
+      <md-list-item @click="toggleMinimap">
+        <md-icon>map</md-icon>
+        <div class="md-list-item-text">
+          <span>Toggle minimap</span>
+          <span>Minimap is {{showMinimap ? 'showing' : 'hidden'}}</span>
+        </div>
+      </md-list-item>
+
       <md-list-item @click="toggleWhitespace">
         <md-icon>settings_ethernet</md-icon>
         <div class="md-list-item-text">
-          <span>Render whitespace</span>
+          <span>Toggle whitespace</span>
           <span>Whitespace will be {{renderWhitespace ? 'shown' : 'hidden'}}</span>
+        </div>
+      </md-list-item>
+
+      <md-list-item @click="toggleWordWrap">
+        <md-icon>wrap_text</md-icon>
+        <div class="md-list-item-text">
+          <span>Toggle word wrap</span>
+          <span>Word wrap is {{wordWrap ? 'on' : 'off'}}</span>
+        </div>
+      </md-list-item>
+
+      <md-list-item @click="toggleLineNumbers">
+        <md-icon>format_list_numbered</md-icon>
+        <div class="md-list-item-text">
+          <span>Toggle line numbers</span>
+          <span>Line numbers are {{showLineNumbers ? 'on' : 'off'}}</span>
         </div>
       </md-list-item>
 
@@ -112,7 +128,9 @@
         'showMinimap',
         'fontSize',
         'currentTheme',
-        'renderWhitespace'
+        'renderWhitespace',
+        'wordWrap',
+        'showLineNumbers'
       ]),
       ...mapState(settingsDrawer, {
         showMenu: 'showDialog'
@@ -120,6 +138,7 @@
     },
     data() {
       const editorLanguages = [];
+      console.log(JSON.stringify(languages.getLanguages(), null, 2));
       languages.getLanguages().forEach(({ id }) => editorLanguages.push(id));
       editorLanguages.sort();
 
@@ -136,7 +155,9 @@
         mutationTypes.setLanguage,
         mutationTypes.toggleMinimap,
         mutationTypes.setEditorTheme,
-        mutationTypes.toggleWhitespace
+        mutationTypes.toggleWhitespace,
+        mutationTypes.toggleWordWrap,
+        mutationTypes.toggleLineNumbers
       ]),
       ...mapActions(fontDialog, {
         openFontDialog: 'show'

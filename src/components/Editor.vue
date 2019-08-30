@@ -23,7 +23,9 @@
       'currentTheme',
       'renderWhitespace',
       'indentSize',
-      'useTabs'
+      'useTabs',
+      'wordWrap',
+      'showLineNumbers'
     ]),
     methods: {
       ...mapActions(editorNamespace, [
@@ -57,6 +59,12 @@
       },
       useTabs(tabs) {
         editor.getModel(model.uri).updateOptions({ insertSpaces: !tabs });
+      },
+      wordWrap(wrap) {
+        editor.updateOptions({ wordWrap: wrap ? 'on' : 'off' });
+      },
+      showLineNumbers(show) {
+        editor.updateOptions({ lineNumbers: show ? 'on' : 'off' });
       }
     },
     mounted() {
@@ -80,7 +88,9 @@
         fontSize: this.fontSize,
         automaticLayout: true,
         renderWhitespace: this.renderWhitespace ? 'boundary' : 'none',
-        autoClosingBrackets: 'always'
+        autoClosingBrackets: 'always',
+        wordWrap: this.wordWrap ? 'on' : 'off',
+        lineNumbers: this.showLineNumbers ? 'on' : 'off'
       });
 
       // Used to give a line of space before the

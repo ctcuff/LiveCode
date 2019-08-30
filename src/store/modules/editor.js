@@ -13,7 +13,9 @@ const mutationTypes = {
   setIndentSize: 'setIndentSize',
   setEditorContent: 'setEditorContent',
   setSelection: 'setSelection',
-  setCursorPosition: 'setCursorPosition'
+  setCursorPosition: 'setCursorPosition',
+  toggleWordWrap: 'toggleWordWrap',
+  toggleLineNumbers: 'toggleLineNumbers'
 };
 
 const editorDefaults = {
@@ -42,7 +44,9 @@ const editorDefaults = {
   cursorPosition: {
     line: 1,
     col: 1,
-  }
+  },
+  wordWrap: true,
+  showLineNumbers: true
 };
 
 const editor = {
@@ -64,7 +68,9 @@ const editor = {
     [mutationTypes.setCursorPosition](state, payload) {
       state.cursorPosition.line = payload.line;
       state.cursorPosition.col = payload.col;
-    }
+    },
+    [mutationTypes.toggleWordWrap]: createToggler('wordWrap'),
+    [mutationTypes.toggleLineNumbers]: createToggler('showLineNumbers')
   },
   actions: {
     updateEditorContent(context, content) {
