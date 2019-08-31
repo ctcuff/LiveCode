@@ -3,20 +3,19 @@
 </template>
 
 <script>
-  import * as monaco from 'monaco-editor';
+  import { editor as monacoEditor } from 'monaco-editor';
   import { allThemes } from '@/util/editorThemes';
   import { mapState, mapActions } from 'vuex';
   import { editorDefaults } from '@/store/modules/editor';
-  import { editor as editorNamespace } from '@/store/modules/moduleNames';
 
   let editor;
-  const model = monaco.editor.createModel(
+  const model = monacoEditor.createModel(
     editorDefaults.content,
     editorDefaults.selectedLanguage,
   );
 
   export default {
-    computed: mapState(editorNamespace, [
+    computed: mapState('editor', [
       'selectedLanguage',
       'fontSize',
       'showMinimap',
@@ -28,52 +27,60 @@
       'showLineNumbers'
     ]),
     methods: {
-      ...mapActions(editorNamespace, [
+      ...mapActions('editor', [
         'updateEditorContent',
         'updateSelection',
         'updateCursorPosition'
-      ])
-    },
-    watch: {
-      selectedLanguage(language) {
-        monaco.editor.setModelLanguage(editor.getModel(model.uri), language);
-      },
-      fontSize(fontSize) {
-        editor.updateOptions({ fontSize });
-      },
-      showMinimap(show) {
-        editor.updateOptions({
-          minimap: {
-            enabled: show
+      ]),
+      handleConfigChange(mutation) {
+        const { payload, type } = mutation;
+
+        // editor settings don't have a payload so we have
+        // to look for changes in the state instead
+        const { showMinimap, renderWhitespace, wordWrap, showLineNumbers } = this;
+
+        if (type.includes('editor')) {
+          switch (type) {
+            case 'editor/setFontSize':
+              editor.updateOptions({ fontSize: payload });
+              break;
+            case 'editor/setLanguage':
+              monacoEditor.setModelLanguage(editor.getModel(model.uri), payload);
+              break;
+            case 'editor/toggleMinimap':
+              editor.updateOptions({ minimap: { enabled: showMinimap } });
+              break;
+            case 'editor/setEditorTheme':
+              monacoEditor.setTheme(payload);
+              break;
+            case 'editor/toggleWhitespace':
+              editor.updateOptions({ renderWhitespace: renderWhitespace ? 'boundary' : 'none' });
+              break;
+            case 'editor/setIndentSize':
+              editor.getModel(model.uri).updateOptions({ tabSize: payload });
+              break;
+            case 'editor/setUseTabs':
+              editor.getModel(model.uri).updateOptions({ insertSpaces: !payload });
+              break;
+            case 'editor/toggleWordWrap':
+              editor.updateOptions({ wordWrap: wordWrap ? 'on' : 'off' });
+              break;
+            case 'editor/toggleLineNumbers':
+              editor.updateOptions({ lineNumbers: showLineNumbers ? 'on' : 'off' });
+              break;
           }
-        });
-      },
-      currentTheme(theme) {
-        monaco.editor.setTheme(theme);
-      },
-      renderWhitespace(render) {
-        editor.updateOptions({ renderWhitespace: render ? 'boundary' : 'none' });
-      },
-      indentSize(tabSize) {
-        editor.getModel(model.uri).updateOptions({ tabSize });
-      },
-      useTabs(tabs) {
-        editor.getModel(model.uri).updateOptions({ insertSpaces: !tabs });
-      },
-      wordWrap(wrap) {
-        editor.updateOptions({ wordWrap: wrap ? 'on' : 'off' });
-      },
-      showLineNumbers(show) {
-        editor.updateOptions({ lineNumbers: show ? 'on' : 'off' });
+        }
       }
     },
     mounted() {
+      this.$store.subscribe(this.handleConfigChange);
+
       Object.keys(allThemes).forEach(themeName => {
         // If the theme data is null, that means it's a default
         // theme that came with monaco
         const themeData = allThemes[themeName].themeData;
         if (themeData) {
-          monaco.editor.defineTheme(themeName, themeData);
+          monacoEditor.defineTheme(themeName, themeData);
         }
       });
 
@@ -82,7 +89,7 @@
         insertSpaces: !this.useTabs,
       });
 
-      editor = monaco.editor.create(document.getElementById('editor'), {
+      editor = monacoEditor.create(document.getElementById('editor'), {
         model,
         theme: this.currentTheme,
         fontSize: this.fontSize,
@@ -111,16 +118,13 @@
       });
 
       editor.onDidChangeCursorSelection(({ selection }) => {
-        const linesSelected = selection.endLineNumber - selection.startLineNumber;
-        const charactersSelected = model
+        const lines = selection.endLineNumber - selection.startLineNumber;
+        const chars = model
           .getValueInRange(editor.getSelection())
           .split('')
           .length;
 
-        this.updateSelection({
-          lines: linesSelected,
-          chars: charactersSelected
-        });
+        this.updateSelection({ lines, chars });
       });
 
       editor.onKeyUp(() => {

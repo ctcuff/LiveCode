@@ -10,6 +10,8 @@
     </md-toolbar>
     <md-list class="md-double-line">
 
+      <md-divider />
+
       <md-list-item @click="openSignOutDialog" v-if="isSignedIn">
         <md-icon>exit_to_app</md-icon>
         <div class="md-list-item-text">
@@ -28,7 +30,8 @@
         <SignInDialog />
       </md-list-item>
 
-      <md-divider></md-divider>
+      <md-divider />
+
       <md-subheader>Editor Settings</md-subheader>
       <md-menu md-size="medium">
         <!--
@@ -119,7 +122,6 @@
 </template>
 
 <script>
-  import Vue from 'vue';
   import { mutationTypes, editorDefaults } from '@/store/modules/editor';
   import {
     editor,
