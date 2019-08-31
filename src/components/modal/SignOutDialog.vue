@@ -12,18 +12,8 @@
 </template>
 
 <script>
-  import Vue from 'vue';
   import { mapState, mapActions } from 'vuex';
   import { signOutDialog } from '@/store/modules/moduleNames';
-  import MdDialog from 'vue-material/dist/components/MdDialog';
-  import MdButton from 'vue-material/dist/components/MdButton';
-  import MdIcon from 'vue-material/dist/components/MdIcon';
-  import MdList from 'vue-material/dist/components/MdList';
-
-  Vue.use(MdDialog);
-  Vue.use(MdButton);
-  Vue.use(MdIcon);
-  Vue.use(MdList);
 
   export default {
     computed: {

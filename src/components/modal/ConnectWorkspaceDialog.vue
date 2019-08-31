@@ -56,24 +56,8 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import MdDialog from 'vue-material/dist/components/MdDialog';
-  import MdButton from 'vue-material/dist/components/MdButton';
-  import MdField from 'vue-material/dist/components/MdField';
-  import MdIcon from 'vue-material/dist/components/MdIcon';
-  import MdTooltip from 'vue-material/dist/components/MdTooltip';
-  import MdDivider from 'vue-material/dist/components/MdDivider';
-  import MdProgress from 'vue-material/dist/components/MdProgress';
   import { mapState, mapActions } from 'vuex';
   import { connectWorkspaceDialog } from '@/store/modules/moduleNames';
-
-  Vue.use(MdDialog);
-  Vue.use(MdButton);
-  Vue.use(MdField);
-  Vue.use(MdIcon);
-  Vue.use(MdTooltip);
-  Vue.use(MdDivider);
-  Vue.use(MdProgress);
 
   export default {
     data() {
@@ -113,7 +97,6 @@
       text-transform: uppercase;
     }
   }
-
 
   .md-dialog-title {
     padding: 24px 24px 0 0;

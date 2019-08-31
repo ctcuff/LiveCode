@@ -40,18 +40,8 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import MdButton from 'vue-material/dist/components/MdButton';
-  import MdDialog from 'vue-material/dist/components/MdDialog';
-  import MdTooltip from 'vue-material/dist/components/MdTooltip';
-  import MdSnackbar from 'vue-material/dist/components/MdSnackbar';
   import { mapState, mapActions } from 'vuex';
   import { workspaceIdDialog } from '@/store/modules/moduleNames';
-
-  Vue.use(MdButton);
-  Vue.use(MdDialog);
-  Vue.use(MdTooltip);
-  Vue.use(MdSnackbar);
 
   export default {
     data() {

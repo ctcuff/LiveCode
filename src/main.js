@@ -1,6 +1,20 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from '@/store';
+import MdDialog from 'vue-material/dist/components/MdDialog';
+import MdButton from 'vue-material/dist/components/MdButton';
+import MdField from 'vue-material/dist/components/MdField';
+import MdIcon from 'vue-material/dist/components/MdIcon';
+import MdTooltip from 'vue-material/dist/components/MdTooltip';
+import MdDivider from 'vue-material/dist/components/MdDivider';
+import MdProgress from 'vue-material/dist/components/MdProgress';
+import MdCheckbox from 'vue-material/dist/components/MdCheckbox';
+import MdList from 'vue-material/dist/components/MdList';
+import MdSnackbar from 'vue-material/dist/components/MdSnackbar';
+import MdToolbar from 'vue-material/dist/components/MdToolbar';
+import MdDrawer from 'vue-material/dist/components/MdDrawer';
+import MdMenu from 'vue-material/dist/components/MdMenu';
+import MdSubheader from 'vue-material/dist/components/MdSubheader';
 import '@/assets/scss/global.scss';
 import 'vue-material/dist/vue-material.min.css';
 import 'vue-material/dist/theme/default.css';
@@ -39,6 +53,21 @@ firebase.auth().onAuthStateChanged(user => {
 Vue.config.productionTip = false;
 Vue.prototype.$firebase = firebase;
 Vue.prototype.$firebaseDB = firebaseDatabase;
+
+Vue.use(MdDialog);
+Vue.use(MdButton);
+Vue.use(MdField);
+Vue.use(MdIcon);
+Vue.use(MdTooltip);
+Vue.use(MdDivider);
+Vue.use(MdProgress);
+Vue.use(MdCheckbox);
+Vue.use(MdList);
+Vue.use(MdSnackbar);
+Vue.use(MdToolbar);
+Vue.use(MdDrawer);
+Vue.use(MdMenu);
+Vue.use(MdSubheader);
 
 new Vue({
   store,

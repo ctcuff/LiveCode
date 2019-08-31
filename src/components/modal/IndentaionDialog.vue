@@ -22,21 +22,11 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import MdDialog from 'vue-material/dist/components/MdDialog';
-  import MdButton from 'vue-material/dist/components/MdButton';
-  import MdField from 'vue-material/dist/components/MdField';
-  import MdCheckbox from 'vue-material/dist/components/MdCheckbox';
   import { mutationTypes } from '@/store/modules/editor';
   import { mapActions, mapState, mapMutations } from 'vuex';
   import { indentDialog, editor } from '@/store/modules/moduleNames';
 
   const { setUseTabs, setIndentSize } = mutationTypes;
-
-  Vue.use(MdDialog);
-  Vue.use(MdButton);
-  Vue.use(MdField);
-  Vue.use(MdCheckbox);
 
   export default {
     data() {

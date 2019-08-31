@@ -32,20 +32,10 @@
 </template>
 
 <script>
-  import Vue from 'vue';
   import { mapState, mapMutations } from 'vuex';
   import { signInDialog } from '@/store/modules/moduleNames';
-  import MdDialog from 'vue-material/dist/components/MdDialog';
-  import MdButton from 'vue-material/dist/components/MdButton';
-  import MdIcon from 'vue-material/dist/components/MdIcon';
-  import MdList from 'vue-material/dist/components/MdList';
   import googleSvg from '@/assets/svg/google.svg';
   import githubSvg from '@/assets/svg/github.svg';
-
-  Vue.use(MdDialog);
-  Vue.use(MdButton);
-  Vue.use(MdIcon);
-  Vue.use(MdList);
 
   export default {
     data() {

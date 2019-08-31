@@ -129,24 +129,11 @@
     signOutDialog
   } from '@/store/modules/moduleNames';
   import { mapState, mapMutations, mapActions } from 'vuex';
-  import MdDrawer from 'vue-material/dist/components/MdDrawer';
-  import MdList from 'vue-material/dist/components/MdList';
-  import MdIcon from 'vue-material/dist/components/MdIcon';
-  import MdToolbar from 'vue-material/dist/components/MdToolbar';
-  import MdMenu from 'vue-material/dist/components/MdMenu';
-  import MdSubheader from 'vue-material/dist/components/MdSubheader';
   import { languages } from 'monaco-editor';
   import { themeNames } from '@/util/editorThemes';
   import ChangeFontSize from '@/components/modal/ChangeFontSize';
   import SignInDialog from '@/components/modal/SignInDialog';
   import SignOutDialog from '@/components/modal/SignOutDialog';
-
-  Vue.use(MdDrawer);
-  Vue.use(MdList);
-  Vue.use(MdIcon);
-  Vue.use(MdToolbar);
-  Vue.use(MdMenu);
-  Vue.use(MdSubheader);
 
   export default {
     components: {

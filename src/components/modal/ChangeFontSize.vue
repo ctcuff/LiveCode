@@ -17,19 +17,11 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import MdDialog from 'vue-material/dist/components/MdDialog';
-  import MdButton from 'vue-material/dist/components/MdButton';
-  import MdField from 'vue-material/dist/components/MdField';
   import { mutationTypes } from '@/store/modules/editor';
   import { mapState, mapActions, mapMutations } from 'vuex';
   import { fontDialog, editor } from '@/store/modules/moduleNames';
 
   const { setFontSize } = mutationTypes;
-
-  Vue.use(MdDialog);
-  Vue.use(MdButton);
-  Vue.use(MdField);
 
   export default {
     data() {

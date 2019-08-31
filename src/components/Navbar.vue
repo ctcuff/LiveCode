@@ -23,10 +23,6 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import MdButton from 'vue-material/dist/components/MdButton';
-  import MdIcon from 'vue-material/dist/components/MdIcon';
-  import MdToolbar from 'vue-material/dist/components/MdToolbar';
   import WorkspaceIdDialog from '@/components/modal/WorkspaceIdDialog';
   import ConnectWorkspaceDialog from '@/components/modal/ConnectWorkspaceDialog';
   import {
@@ -43,10 +39,6 @@
     'webkitfullscreenchange',
     'requestFullscreen'
   ];
-
-  Vue.use(MdButton);
-  Vue.use(MdIcon);
-  Vue.use(MdToolbar);
 
   export default {
     components: {

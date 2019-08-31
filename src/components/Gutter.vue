@@ -29,16 +29,12 @@
 </template>
 
 <script>
-  import Vue from 'vue';
   import { mapState, mapActions, mapGetters } from 'vuex';
   import { allThemes } from '@/util/editorThemes';
   import IndentationDialog from '@/components/modal/IndentaionDialog';
-  import MdTooltip from 'vue-material/dist/components/MdTooltip';
   import { editor, indentDialog } from '@/store/modules/moduleNames';
   // noinspection ES6CheckImport
   import { gutterDark, gutterLight } from '@/assets/scss/_gutter.scss';
-
-  Vue.use(MdTooltip);
 
   export default {
     components: {
