@@ -4,6 +4,9 @@ const indentDialog = 'indentDialog';
 const workspaceIdDialog = 'workspaceIdDialog';
 const settingsDrawer = 'settingsDrawer';
 const connectWorkspaceDialog = 'connectWorkspaceDialog';
+const user = 'user';
+const signInDialog = 'signInDialog';
+const signOutDialog = 'signOutDialog';
 
 export {
   editor,
@@ -11,5 +14,8 @@ export {
   indentDialog,
   workspaceIdDialog,
   settingsDrawer,
-  connectWorkspaceDialog
+  connectWorkspaceDialog,
+  user,
+  signInDialog,
+  signOutDialog
 };

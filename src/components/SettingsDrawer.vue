@@ -10,12 +10,22 @@
     </md-toolbar>
     <md-list class="md-double-line">
 
-      <md-list-item @click="() => {}">
+      <md-list-item @click="openSignOutDialog" v-if="isSignedIn">
+        <md-icon>exit_to_app</md-icon>
+        <div class="md-list-item-text">
+          <span>Sign out</span>
+          <span>Signed in as {{email}}</span>
+        </div>
+        <SignOutDialog />
+      </md-list-item>
+
+      <md-list-item @click="openSignInDialog" v-else>
         <md-icon>exit_to_app</md-icon>
         <div class="md-list-item-text">
           <span>Sign in</span>
-          <span>Sign in to share your workspace with others</span>
+          <span>Sign in to share your workspace or connect with others</span>
         </div>
+        <SignInDialog />
       </md-list-item>
 
       <md-divider></md-divider>
@@ -42,7 +52,6 @@
           </md-menu-content>
         </md-list-item>
       </md-menu>
-
 
       <md-list-item @click="openFontDialog">
         <md-icon>text_fields</md-icon>
@@ -112,7 +121,13 @@
 <script>
   import Vue from 'vue';
   import { mutationTypes, editorDefaults } from '@/store/modules/editor';
-  import { editor, fontDialog, settingsDrawer } from '@/store/modules/moduleNames';
+  import {
+    editor,
+    fontDialog,
+    settingsDrawer,
+    signInDialog,
+    signOutDialog
+  } from '@/store/modules/moduleNames';
   import { mapState, mapMutations, mapActions } from 'vuex';
   import MdDrawer from 'vue-material/dist/components/MdDrawer';
   import MdList from 'vue-material/dist/components/MdList';
@@ -123,6 +138,8 @@
   import { languages } from 'monaco-editor';
   import { themeNames } from '@/util/editorThemes';
   import ChangeFontSize from '@/components/modal/ChangeFontSize';
+  import SignInDialog from '@/components/modal/SignInDialog';
+  import SignOutDialog from '@/components/modal/SignOutDialog';
 
   Vue.use(MdDrawer);
   Vue.use(MdList);
@@ -133,7 +150,9 @@
 
   export default {
     components: {
+      SignOutDialog,
       ChangeFontSize,
+      SignInDialog
     },
     computed: {
       ...mapState(editor, [
@@ -147,7 +166,11 @@
       ]),
       ...mapState(settingsDrawer, {
         showMenu: 'showDialog'
-      })
+      }),
+      ...mapState('user', [
+        'isSignedIn',
+        'email'
+      ])
     },
     data() {
       const editorLanguages = [];
@@ -174,7 +197,16 @@
       ...mapActions(fontDialog, {
         openFontDialog: 'show'
       }),
-      ...mapActions(settingsDrawer, ['hide'])
+      ...mapActions(settingsDrawer, ['hide']),
+      ...mapActions('user', ['signOut']),
+      openSignInDialog() {
+        this.hide();
+        this.$store.dispatch(`${signInDialog}/show`);
+      },
+      openSignOutDialog() {
+        this.hide();
+        this.$store.dispatch(`${signOutDialog}/show`);
+      }
     }
   };
 
@@ -203,7 +235,7 @@
       color: $text-color !important;
       font-size: 12px;
       white-space: pre-line;
-      max-width: 200px;
+      max-width: 180px;
     }
 
     & span:nth-child(1) {

@@ -2,22 +2,28 @@
   <div>
     <md-dialog :md-active.sync="showDialog" :md-fullscreen="false" :md-click-outside-to-close="false">
       <md-dialog-title>
-        <md-icon>info</md-icon>
+<!--        <md-icon>info</md-icon>-->
         Workspace ID
       </md-dialog-title>
-      <div id="dialog-body">
+      <div class="dialog-body" v-if="isSignedIn">
         <p>Your workspace ID is
           <span id="workspace-id">
             <b>{{workspaceId}}</b>
           </span>
         </p>
-        <p>Share this with others so they can connect to your editor</p>
+        <p>Share this with others so they can connect to your editor.</p>
+      </div>
+      <div class="dialog-body" v-else>
+        <p>Sign in to view your workspace ID</p>
       </div>
       <md-dialog-actions>
         <md-button class="md-primary" @click="hide">Close</md-button>
-        <md-button class="md-primary" @click="copyToClipboard">
+        <md-button class="md-primary" @click="copyToClipboard" v-if="isSignedIn">
           Copy
           <md-tooltip>Copy to clipboard</md-tooltip>
+        </md-button>
+        <md-button class="md-primary" @click="openSignInDialog" v-else>
+          Sign in
         </md-button>
       </md-dialog-actions>
     </md-dialog>
@@ -50,13 +56,22 @@
   export default {
     data() {
       return {
-        showSnackbar: false,
-        workspaceId: this.$root.workspaceId,
+        showSnackbar: false
       };
     },
-    computed: mapState(workspaceIdDialog, ['showDialog']),
+    computed: {
+      ...mapState(workspaceIdDialog, ['showDialog']),
+      ...mapState('user', [
+        'isSignedIn',
+        'workspaceId'
+      ])
+    },
     methods: {
       ...mapActions(workspaceIdDialog, ['hide']),
+      openSignInDialog() {
+        this.$store.dispatch('signInDialog/show');
+        this.hide();
+      },
       fallbackCopyToClipboard() {
         const textArea = document.createElement("textarea");
         textArea.value = this.workspaceId;
@@ -99,7 +114,7 @@
     padding: 24px 24px 0 0;
   }
 
-  #dialog-body p {
+  .dialog-body p {
     font-size: 16px;
   }
 

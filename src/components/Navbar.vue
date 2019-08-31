@@ -9,7 +9,7 @@
       <md-icon v-else>fullscreen</md-icon>
     </md-button>
 
-    <md-button class="md-icon-button" @click="openConnectDialog" title="Connect to workspace">
+    <md-button class="md-icon-button" title="Connect to workspace" @click="openConnectDialog">
       <md-icon>meeting_room</md-icon>
       <ConnectWorkspaceDialog />
     </md-button>
@@ -34,7 +34,7 @@
     settingsDrawer,
     connectWorkspaceDialog
   } from '@/store/modules/moduleNames';
-  import { mapActions } from 'vuex';
+  import { mapActions, mapState } from 'vuex';
 
   // Events fired when the site enters fullscreen
   const events = [
@@ -69,6 +69,7 @@
         document.removeEventListener(event, this.toggleFullscreenIcon);
       });
     },
+    computed: mapState('user', ['isSignedIn']),
     methods: {
       ...mapActions(workspaceIdDialog, { openIdDialog: 'show' }),
       ...mapActions(settingsDrawer, { openMenu: 'show' }),
@@ -106,15 +107,6 @@
 <style lang="scss" scoped>
   @import "../assets/scss/navbar";
 
-  nav {
-    align-items: center;
-    height: $navbar-height;
-    color: white;
-    display: flex;
-    font-family: 'Avenir', Consolas, monospace;
-    background-color: #333333;
-    width: 100%;
-  }
 
   .md-icon.md-theme-default.md-icon-font {
     color: #b9b9b9
