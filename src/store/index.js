@@ -6,7 +6,8 @@ import {
   fontDialog,
   indentDialog,
   workspaceIdDialog,
-  settingsDrawer
+  settingsDrawer,
+  connectWorkspaceDialog
 } from '@/store/modules/moduleNames';
 
 Vue.use(Vuex);
@@ -18,6 +19,7 @@ export default new Vuex.Store({
     [fontDialog]: generateModalState(),
     [indentDialog]: generateModalState(),
     [workspaceIdDialog]: generateModalState(),
-    [settingsDrawer]: generateModalState()
+    [settingsDrawer]: generateModalState(),
+    [connectWorkspaceDialog]: generateModalState()
   }
 });

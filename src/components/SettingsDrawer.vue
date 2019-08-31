@@ -1,5 +1,5 @@
 <template>
-  <md-drawer :md-active.sync="showMenu" md-persistent="full">
+  <md-drawer :md-active.sync="showMenu" md-persistent="full" class="md-scrollbar">
     <md-toolbar md-elevation="0">
       <span>Settings</span>
       <div class="md-toolbar-section-end">
@@ -9,8 +9,18 @@
       </div>
     </md-toolbar>
     <md-list class="md-double-line">
-      <md-menu md-size="medium">
 
+      <md-list-item @click="() => {}">
+        <md-icon>exit_to_app</md-icon>
+        <div class="md-list-item-text">
+          <span>Sign in</span>
+          <span>Sign in to share your workspace with others</span>
+        </div>
+      </md-list-item>
+
+      <md-divider></md-divider>
+      <md-subheader>Editor Settings</md-subheader>
+      <md-menu md-size="medium">
         <!--
         Give the menu-item an empty click listener so it
         renders as a button and gets the ripple effect
@@ -109,6 +119,7 @@
   import MdIcon from 'vue-material/dist/components/MdIcon';
   import MdToolbar from 'vue-material/dist/components/MdToolbar';
   import MdMenu from 'vue-material/dist/components/MdMenu';
+  import MdSubheader from 'vue-material/dist/components/MdSubheader';
   import { languages } from 'monaco-editor';
   import { themeNames } from '@/util/editorThemes';
   import ChangeFontSize from '@/components/modal/ChangeFontSize';
@@ -118,6 +129,7 @@
   Vue.use(MdIcon);
   Vue.use(MdToolbar);
   Vue.use(MdMenu);
+  Vue.use(MdSubheader);
 
   export default {
     components: {
@@ -174,7 +186,7 @@
   $drawer-font-size: 17px;
 
   .md-drawer {
-    width: 245px;
+    width: auto;
 
     &.md-theme-default {
       background-color: #252526;
@@ -190,6 +202,8 @@
     & span {
       color: $text-color !important;
       font-size: 12px;
+      white-space: pre-line;
+      max-width: 200px;
     }
 
     & span:nth-child(1) {

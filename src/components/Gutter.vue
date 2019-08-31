@@ -2,7 +2,7 @@
   <div>
     <div id="gutter" ref="gutter">
       <div class="line-info" v-if="selection.chars > 0 || selection.lines > 0">
-        <span v-if="selection.chars > 0">
+        <span v-if="selection.chars > 0" id="char-count">
           {{selection.chars}} chars<span v-if="selection.lines > 0">,</span>
         </span>
         <span v-if="selection.lines > 0">{{selection.lines}} lines</span>
@@ -140,6 +140,9 @@
 
     & span {
       flex: 1;
+      &#char-count {
+        margin-right: 2px;
+      }
     }
   }
 

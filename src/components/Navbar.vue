@@ -9,8 +9,9 @@
       <md-icon v-else>fullscreen</md-icon>
     </md-button>
 
-    <md-button class="md-icon-button" @click="() => {}" title="Connect to workspace">
+    <md-button class="md-icon-button" @click="openConnectDialog" title="Connect to workspace">
       <md-icon>meeting_room</md-icon>
+      <ConnectWorkspaceDialog />
     </md-button>
 
     <md-button class="md-icon-button" @click="openIdDialog" title="View workspace id">
@@ -27,7 +28,12 @@
   import MdIcon from 'vue-material/dist/components/MdIcon';
   import MdToolbar from 'vue-material/dist/components/MdToolbar';
   import WorkspaceIdDialog from '@/components/modal/WorkspaceIdDialog';
-  import { workspaceIdDialog, settingsDrawer } from '@/store/modules/moduleNames';
+  import ConnectWorkspaceDialog from '@/components/modal/ConnectWorkspaceDialog';
+  import {
+    workspaceIdDialog,
+    settingsDrawer,
+    connectWorkspaceDialog
+  } from '@/store/modules/moduleNames';
   import { mapActions } from 'vuex';
 
   // Events fired when the site enters fullscreen
@@ -44,7 +50,8 @@
 
   export default {
     components: {
-      WorkspaceIdDialog
+      WorkspaceIdDialog,
+      ConnectWorkspaceDialog
     },
     name: 'Navbar',
     data() {
@@ -63,12 +70,9 @@
       });
     },
     methods: {
-      ...mapActions(workspaceIdDialog, {
-        openIdDialog: 'show'
-      }),
-      ...mapActions(settingsDrawer, {
-        openMenu: 'show'
-      }),
+      ...mapActions(workspaceIdDialog, { openIdDialog: 'show' }),
+      ...mapActions(settingsDrawer, { openMenu: 'show' }),
+      ...mapActions(connectWorkspaceDialog, { openConnectDialog: 'show' }),
       toggleFullscreenIcon() {
         this.isFullScreen =
           document.fullScreen ||

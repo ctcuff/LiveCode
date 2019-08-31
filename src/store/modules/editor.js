@@ -18,6 +18,18 @@ const mutationTypes = {
   toggleLineNumbers: 'toggleLineNumbers'
 };
 
+const editorContent = `
+# LiveCode
+
+Welcome to LiveCode! This is an online text editor that supports
+multiple languages. To change the current syntax highlighting, 
+open settings, language, than take your pick.
+
+To share you workspace with someone, click the _info_ icon to the
+right on the navbar and give them your workspace id.
+
+Happy editing!`;
+
 const editorDefaults = {
   selectedLanguage: 'markdown',
   fontSize: 14,
@@ -27,16 +39,7 @@ const editorDefaults = {
   renderWhitespace: true,
   indentSize: 4,
   useTabs: true,
-  content: '# LiveCode\n' +
-    '\n' +
-    'Welcome to LiveCode! This is an online text editor that supports\n' +
-    'the highlighting of multiple languages. To change the current syntax\n' +
-    'highlighting, click settings, language, than take your pick.\n' +
-    '\n' +
-    'To share you workspace with someone, click the _info_ icon to the\n' +
-    'right on the navbar and give them your workspace id.\n' +
-    '\n' +
-    'Happy editing!',
+  content: editorContent.trim(),
   selection: {
     lines: 0,
     chars: 0
