@@ -1,6 +1,5 @@
 import debounce from '@/util/debounce';
 
-const debounceDelay = 100;
 const editorContent = `
 # LiveCode
 
@@ -83,7 +82,7 @@ const editor = {
     updateEditorContent(context, content) {
       const action = debounce(() => {
         context.commit('setEditorContent', content);
-      }, debounceDelay);
+      }, 500);
       action();
     },
     updateSelection(context, payload) {
@@ -92,7 +91,7 @@ const editor = {
           lines: payload.lines,
           chars: payload.chars
         });
-      }, debounceDelay);
+      }, 250);
       action();
     },
     updateCursorPosition(context, payload) {
@@ -101,7 +100,7 @@ const editor = {
           line: payload.line,
           col: payload.col
         });
-      }, debounceDelay);
+      }, 100);
       action();
     }
   },

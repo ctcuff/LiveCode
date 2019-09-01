@@ -1,10 +1,12 @@
 <template>
-  <div id="editor" ref="editor"></div>
+  <div>
+    <div id="editor"></div>
+  </div>
 </template>
 
 <script>
   import { editor as monacoEditor } from 'monaco-editor';
-  import { allThemes } from '@/util/editorThemes';
+  import themes from '@/util/editorThemes';
   import { mapState, mapActions } from 'vuex';
   import { editorDefaults } from '@/store/modules/editor';
 
@@ -15,28 +17,36 @@
   );
 
   export default {
-    computed: mapState('editor', [
-      'selectedLanguage',
-      'fontSize',
-      'showMinimap',
-      'currentTheme',
-      'renderWhitespace',
-      'indentSize',
-      'useTabs',
-      'wordWrap',
-      'showLineNumbers'
-    ]),
+    computed: {
+      ...mapState('editor', [
+        'selectedLanguage',
+        'fontSize',
+        'showMinimap',
+        'currentTheme',
+        'renderWhitespace',
+        'indentSize',
+        'useTabs',
+        'wordWrap',
+        'showLineNumbers'
+      ]),
+      ...mapState('settingsDrawer', {
+        isSettingsOpen: 'showDialog'
+      })
+    },
     methods: {
       ...mapActions('editor', [
         'updateEditorContent',
         'updateSelection',
         'updateCursorPosition'
       ]),
+      ...mapActions('settingsDrawer', {
+        closeSettingsDrawer: 'hide'
+      }),
       handleConfigChange(mutation) {
         const { payload, type } = mutation;
 
-        // editor settings that are toggled don't 
-        // have a payload so we have to look for 
+        // editor settings that are toggled don't
+        // have a payload so we have to look for
         // changes in the state instead
         const {
           showMinimap,
@@ -87,10 +97,10 @@
     mounted() {
       this.$store.subscribe(this.handleConfigChange);
 
-      Object.keys(allThemes).forEach(themeName => {
+      Object.keys(themes).forEach(themeName => {
         // If the theme data is null, that means it's a default
         // theme that came with monaco
-        const themeData = allThemes[themeName].themeData;
+        const themeData = themes[themeName].themeData;
         if (themeData) {
           monacoEditor.defineTheme(themeName, themeData);
         }
@@ -125,6 +135,12 @@
         });
       });
 
+      editor.onDidFocusEditorWidget(() => {
+        if (this.isSettingsOpen) {
+          this.closeSettingsDrawer();
+        }
+      });
+
       editor.onDidChangeCursorPosition(({ position }) => {
         this.updateCursorPosition({
           line: position.lineNumber,
@@ -132,6 +148,7 @@
         });
       });
 
+      // Fired when text is highlighted
       editor.onDidChangeCursorSelection(({ selection }) => {
         const lines = selection.endLineNumber - selection.startLineNumber;
         const chars = model
@@ -142,7 +159,8 @@
         this.updateSelection({ lines, chars });
       });
 
-      editor.onKeyUp(() => {
+      // Fired when the text in the editor changes
+      editor.onDidChangeModelContent(() => {
         this.updateEditorContent(editor.getValue());
       });
     }
