@@ -125,7 +125,7 @@
   import { editorDefaults } from '@/store/modules/editor';
   import { mapState, mapMutations, mapActions } from 'vuex';
   import { languages } from 'monaco-editor';
-  import { themeNames } from '@/util/editorThemes';
+  import themes from '@/util/editorThemes';
   import ChangeFontSize from '@/components/modal/ChangeFontSize';
   import SignInDialog from '@/components/modal/SignInDialog';
   import SignOutDialog from '@/components/modal/SignOutDialog';
@@ -152,6 +152,7 @@
       ...mapState('user', ['isSignedIn', 'email'])
     },
     data() {
+      const themeNames = Object.keys(themes).sort();
       const editorLanguages = [];
       languages.getLanguages().forEach(({ id }) => editorLanguages.push(id));
       editorLanguages.sort();
@@ -161,7 +162,7 @@
         menuVisible: false,
         defaultFontSize: editorDefaults.fontSize,
         defaultTheme: editorDefaults.theme,
-        themes: themeNames.slice().sort()
+        themes: themeNames
       };
     },
     methods: {
@@ -207,7 +208,6 @@
   .md-list-item {
     cursor: pointer;
   }
-
 
   .md-list-item-text {
     & span {

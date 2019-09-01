@@ -30,7 +30,7 @@
 
 <script>
   import { mapState, mapActions, mapGetters } from 'vuex';
-  import { allThemes } from '@/util/editorThemes';
+  import themes from '@/util/editorThemes';
   import IndentationDialog from '@/components/modal/IndentaionDialog';
   // noinspection ES6CheckImport
   import { gutterDark, gutterLight } from '@/assets/scss/_gutter.scss';
@@ -76,7 +76,7 @@
       this.$store.watch(
         state => state.editor.currentTheme,
         theme => {
-          this.$refs.gutter.style.backgroundColor = allThemes[theme].isLight
+          this.$refs.gutter.style.backgroundColor = themes[theme].isLight
             ? gutterDark
             : gutterLight;
         }

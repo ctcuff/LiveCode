@@ -1,14 +1,7 @@
 import monokai from '@/assets/themes/monokai';
 import chromeDevTools from '@/assets/themes/chromeDevTools';
 
-const themeNames = [
-  'vs-dark',
-  'vs-light',
-  'monokai',
-  'chrome-devtools'
-];
-
-const allThemes = {
+export default  {
   'monokai': {
     themeData: monokai,
     isLight: false
@@ -26,5 +19,3 @@ const allThemes = {
     isLight: true
   }
 };
-
-export { themeNames, allThemes };
