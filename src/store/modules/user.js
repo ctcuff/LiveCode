@@ -1,5 +1,3 @@
-import { createSetter } from '@/util/creator';
-
 export default {
   namespaced: true,
   state: {
@@ -9,9 +7,17 @@ export default {
     workspaceId: null
   },
   mutations: {
-    setEmail: createSetter('email'),
-    setIsSignedIn: createSetter('isSignedIn'),
-    setUid: createSetter('uid'),
-    setWorkspaceId: createSetter('workspaceId')
+    setEmail: (state, email) => {
+      state.email = email;
+    },
+    setIsSignedIn: (state, isSignedIn) => {
+      state.isSignedIn = isSignedIn;
+    },
+    setUid: (state, uid) => {
+      state.uid = uid;
+    },
+    setWorkspaceId: (state, workspaceId) => {
+      state.workspaceId = workspaceId;
+    }
   }
 };

@@ -22,11 +22,7 @@
 </template>
 
 <script>
-  import { mutationTypes } from '@/store/modules/editor';
   import { mapActions, mapState, mapMutations } from 'vuex';
-  import { indentDialog, editor } from '@/store/modules/moduleNames';
-
-  const { setUseTabs, setIndentSize } = mutationTypes;
 
   export default {
     data() {
@@ -35,13 +31,13 @@
         selectedIndentSize: this.$store.state.editor.indentSize
       };
     },
-    computed: mapState(indentDialog, ['showDialog']),
+    computed: mapState('indentDialog', ['showDialog']),
     methods: {
-      ...mapMutations(editor, [
-        setUseTabs,
-        setIndentSize
+      ...mapMutations('editor', [
+        'setUseTabs',
+        'setIndentSize'
       ]),
-      ...mapActions(indentDialog, ['hide']),
+      ...mapActions('indentDialog', ['hide']),
       updateIndentOptions() {
         this.show = false;
         this.setUseTabs(this.useTabs);

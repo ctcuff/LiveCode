@@ -1,23 +1,6 @@
-import { createSetter, createToggler } from '@/util/creator';
 import debounce from '@/util/debounce';
 
 const debounceDelay = 100;
-
-const mutationTypes = {
-  setLanguage: 'setLanguage',
-  setFontSize: 'setFontSize',
-  toggleMinimap: 'toggleMinimap',
-  setEditorTheme: 'setEditorTheme',
-  toggleWhitespace: 'toggleWhitespace',
-  setUseTabs: 'setUseTabs',
-  setIndentSize: 'setIndentSize',
-  setEditorContent: 'setEditorContent',
-  setSelection: 'setSelection',
-  setCursorPosition: 'setCursorPosition',
-  toggleWordWrap: 'toggleWordWrap',
-  toggleLineNumbers: 'toggleLineNumbers'
-};
-
 const editorContent = `
 # LiveCode
 
@@ -33,11 +16,11 @@ Happy editing!`;
 
 const editorDefaults = {
   selectedLanguage: 'markdown',
-  fontSize: 14,
-  showMinimap: true,
+  fontSize: 16,
+  showMinimap: false,
   theme: 'vs-dark',
   currentTheme: 'vs-dark',
-  renderWhitespace: true,
+  renderWhitespace: false,
   indentSize: 4,
   useTabs: true,
   content: editorContent.trim(),
@@ -57,35 +40,55 @@ const editor = {
   namespaced: true,
   state: { ...editorDefaults },
   mutations: {
-    [mutationTypes.setLanguage]: createSetter('selectedLanguage'),
-    [mutationTypes.setFontSize]: createSetter('fontSize'),
-    [mutationTypes.toggleMinimap]: createToggler('showMinimap'),
-    [mutationTypes.setEditorTheme]: createSetter('currentTheme'),
-    [mutationTypes.toggleWhitespace]: createToggler('renderWhitespace'),
-    [mutationTypes.setUseTabs]: createSetter('useTabs'),
-    [mutationTypes.setIndentSize]: createSetter('indentSize'),
-    [mutationTypes.setEditorContent]: createSetter('content'),
-    [mutationTypes.setSelection](state, payload) {
+    setLanguage: (state, lang) => {
+      state.selectedLanguage = lang;
+    },
+    setFontSize: (state, size) => {
+      state.fontSize = size;
+    },
+    toggleMinimap: (state, show) => {
+      state.showMinimap = show;
+    },
+    setEditorTheme: (state, theme) => {
+      state.currentTheme = theme;
+    },
+    toggleWhitespace: (state, shouldRender) => {
+      state.renderWhitespace = shouldRender;
+    },
+    setUseTabs: (state, useTabs) => {
+      state.useTabs = useTabs;
+    },
+    setIndentSize: (state, indentSize) => {
+      state.indentSize = indentSize;
+    },
+    setEditorContent: (state, content) => {
+      state.content = content;
+    },
+    toggleWordWrap: state => {
+      state.wordWrap = !state.wordWrap;
+    },
+    toggleLineNumbers: state => {
+      state.showLineNumbers = !state.showLineNumbers;
+    },
+    setSelection(state, payload) {
       state.selection.lines = payload.lines;
       state.selection.chars = payload.chars;
     },
-    [mutationTypes.setCursorPosition](state, payload) {
+    setCursorPosition(state, payload) {
       state.cursorPosition.line = payload.line;
       state.cursorPosition.col = payload.col;
     },
-    [mutationTypes.toggleWordWrap]: createToggler('wordWrap'),
-    [mutationTypes.toggleLineNumbers]: createToggler('showLineNumbers')
   },
   actions: {
     updateEditorContent(context, content) {
       const action = debounce(() => {
-        context.commit(mutationTypes.setEditorContent, content);
+        context.commit('setEditorContent', content);
       }, debounceDelay);
       action();
     },
     updateSelection(context, payload) {
       const action = debounce(() => {
-        context.commit(mutationTypes.setSelection, {
+        context.commit('setSelection', {
           lines: payload.lines,
           chars: payload.chars
         });
@@ -94,7 +97,7 @@ const editor = {
     },
     updateCursorPosition(context, payload) {
       const action = debounce(() => {
-        context.commit(mutationTypes.setCursorPosition, {
+        context.commit('setCursorPosition', {
           line: payload.line,
           col: payload.col
         });
@@ -107,4 +110,4 @@ const editor = {
   }
 };
 
-export { editor as default, mutationTypes, editorDefaults };
+export { editor as default, editorDefaults };

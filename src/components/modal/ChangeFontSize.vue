@@ -17,11 +17,7 @@
 </template>
 
 <script>
-  import { mutationTypes } from '@/store/modules/editor';
   import { mapState, mapActions, mapMutations } from 'vuex';
-  import { fontDialog, editor } from '@/store/modules/moduleNames';
-
-  const { setFontSize } = mutationTypes;
 
   export default {
     data() {
@@ -33,7 +29,7 @@
       };
     },
     computed: {
-      ...mapState(fontDialog, ['showDialog']),
+      ...mapState('fontDialog', ['showDialog']),
       errorClass() {
         return {
           'md-invalid': this.hasError
@@ -46,8 +42,8 @@
       }
     },
     methods: {
-      ...mapActions(fontDialog, ['hide']),
-      ...mapMutations(editor, [setFontSize]),
+      ...mapActions('fontDialog', ['hide']),
+      ...mapMutations('editor', ['setFontSize']),
       verifyFontSize() {
         const value = parseInt(this.inputText);
 

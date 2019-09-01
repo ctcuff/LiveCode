@@ -13,14 +13,11 @@
 
 <script>
   import { mapState, mapActions } from 'vuex';
-  import { signOutDialog } from '@/store/modules/moduleNames';
 
   export default {
-    computed: {
-      ...mapState(signOutDialog, ['showDialog'])
-    },
+    computed: mapState('signOutDialog', ['showDialog']),
     methods: {
-      ...mapActions(signOutDialog, ['hide']),
+      ...mapActions('signOutDialog', ['hide']),
       signOut() {
         this.$firebase.auth().signOut();
         this.hide();

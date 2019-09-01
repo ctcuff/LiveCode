@@ -41,7 +41,6 @@
 
 <script>
   import { mapState, mapActions } from 'vuex';
-  import { workspaceIdDialog } from '@/store/modules/moduleNames';
 
   export default {
     data() {
@@ -50,14 +49,11 @@
       };
     },
     computed: {
-      ...mapState(workspaceIdDialog, ['showDialog']),
-      ...mapState('user', [
-        'isSignedIn',
-        'workspaceId'
-      ])
+      ...mapState('workspaceIdDialog', ['showDialog']),
+      ...mapState('user', ['isSignedIn', 'workspaceId'])
     },
     methods: {
-      ...mapActions(workspaceIdDialog, ['hide']),
+      ...mapActions('workspaceIdDialog', ['hide']),
       openSignInDialog() {
         this.$store.dispatch('signInDialog/show');
         this.hide();

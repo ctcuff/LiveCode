@@ -25,11 +25,6 @@
 <script>
   import WorkspaceIdDialog from '@/components/modal/WorkspaceIdDialog';
   import ConnectWorkspaceDialog from '@/components/modal/ConnectWorkspaceDialog';
-  import {
-    workspaceIdDialog,
-    settingsDrawer,
-    connectWorkspaceDialog
-  } from '@/store/modules/moduleNames';
   import { mapActions, mapState } from 'vuex';
 
   // Events fired when the site enters fullscreen
@@ -63,9 +58,9 @@
     },
     computed: mapState('user', ['isSignedIn']),
     methods: {
-      ...mapActions(workspaceIdDialog, { openIdDialog: 'show' }),
-      ...mapActions(settingsDrawer, { openMenu: 'show' }),
-      ...mapActions(connectWorkspaceDialog, { openConnectDialog: 'show' }),
+      ...mapActions('workspaceIdDialog', { openIdDialog: 'show' }),
+      ...mapActions('settingsDrawer', { openMenu: 'show' }),
+      ...mapActions('connectWorkspaceDialog', { openConnectDialog: 'show' }),
       toggleFullscreenIcon() {
         this.isFullScreen =
           document.fullScreen ||

@@ -33,7 +33,6 @@
 
 <script>
   import { mapState, mapMutations } from 'vuex';
-  import { signInDialog } from '@/store/modules/moduleNames';
   import googleSvg from '@/assets/svg/google.svg';
   import githubSvg from '@/assets/svg/github.svg';
 
@@ -48,7 +47,7 @@
       };
     },
     computed: {
-      ...mapState(signInDialog, ['showDialog']),
+      ...mapState('signInDialog', ['showDialog']),
       listDisabled() {
         return {
           'list-disabled': this.isAuthInProgress
@@ -59,7 +58,7 @@
       ...mapMutations('user', ['setEmail']),
       hide() {
         this.authErrorOccurred = false;
-        this.$store.dispatch(`${signInDialog}/hide`);
+        this.$store.dispatch('signInDialog/hide');
       },
       signIn(method) {
         if (this.isAuthInProgress) {
@@ -101,7 +100,7 @@
   }
 
   .list-disabled {
-   opacity: 0.5;
+    opacity: 0.5;
   }
 </style>
 

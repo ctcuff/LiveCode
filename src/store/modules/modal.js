@@ -1,5 +1,3 @@
-import { createSetter } from '@/util/creator';
-
 // Return the modal's state with a function
 // so that modals don't accidentally share properties
 const generateModalState = () => ({
@@ -8,7 +6,9 @@ const generateModalState = () => ({
     showDialog: false,
   },
   mutations: {
-    setShowDialog: createSetter('showDialog')
+    setShowDialog: (state, show) => {
+      state.showDialog = show;
+    }
   },
   actions: {
     show(context) {

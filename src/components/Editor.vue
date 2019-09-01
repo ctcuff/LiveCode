@@ -35,9 +35,15 @@
       handleConfigChange(mutation) {
         const { payload, type } = mutation;
 
-        // editor settings don't have a payload so we have
-        // to look for changes in the state instead
-        const { showMinimap, renderWhitespace, wordWrap, showLineNumbers } = this;
+        // editor settings that are toggled don't 
+        // have a payload so we have to look for 
+        // changes in the state instead
+        const {
+          showMinimap,
+          renderWhitespace,
+          wordWrap,
+          showLineNumbers
+        } = this;
 
         if (type.includes('editor')) {
           switch (type) {
@@ -48,13 +54,19 @@
               monacoEditor.setModelLanguage(editor.getModel(model.uri), payload);
               break;
             case 'editor/toggleMinimap':
-              editor.updateOptions({ minimap: { enabled: showMinimap } });
+              editor.updateOptions({
+                minimap: {
+                  enabled: showMinimap
+                }
+              });
               break;
             case 'editor/setEditorTheme':
               monacoEditor.setTheme(payload);
               break;
             case 'editor/toggleWhitespace':
-              editor.updateOptions({ renderWhitespace: renderWhitespace ? 'boundary' : 'none' });
+              editor.updateOptions({
+                renderWhitespace: renderWhitespace ? 'boundary' : 'none'
+              });
               break;
             case 'editor/setIndentSize':
               editor.getModel(model.uri).updateOptions({ tabSize: payload });
@@ -97,7 +109,10 @@
         renderWhitespace: this.renderWhitespace ? 'boundary' : 'none',
         autoClosingBrackets: 'always',
         wordWrap: this.wordWrap ? 'on' : 'off',
-        lineNumbers: this.showLineNumbers ? 'on' : 'off'
+        lineNumbers: this.showLineNumbers ? 'on' : 'off',
+        minimap: {
+          enabled: this.showMinimap
+        }
       });
 
       // Used to give a line of space before the
@@ -110,10 +125,10 @@
         });
       });
 
-      editor.onDidChangeCursorPosition(({ position: { lineNumber, column } }) => {
+      editor.onDidChangeCursorPosition(({ position }) => {
         this.updateCursorPosition({
-          line: lineNumber,
-          col: column
+          line: position.lineNumber,
+          col: position.column
         });
       });
 

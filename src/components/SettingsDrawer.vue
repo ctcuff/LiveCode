@@ -122,14 +122,7 @@
 </template>
 
 <script>
-  import { mutationTypes, editorDefaults } from '@/store/modules/editor';
-  import {
-    editor,
-    fontDialog,
-    settingsDrawer,
-    signInDialog,
-    signOutDialog
-  } from '@/store/modules/moduleNames';
+  import { editorDefaults } from '@/store/modules/editor';
   import { mapState, mapMutations, mapActions } from 'vuex';
   import { languages } from 'monaco-editor';
   import { themeNames } from '@/util/editorThemes';
@@ -144,7 +137,7 @@
       SignInDialog
     },
     computed: {
-      ...mapState(editor, [
+      ...mapState('editor', [
         'selectedLanguage',
         'showMinimap',
         'fontSize',
@@ -153,13 +146,10 @@
         'wordWrap',
         'showLineNumbers'
       ]),
-      ...mapState(settingsDrawer, {
+      ...mapState('settingsDrawer', {
         showMenu: 'showDialog'
       }),
-      ...mapState('user', [
-        'isSignedIn',
-        'email'
-      ])
+      ...mapState('user', ['isSignedIn', 'email'])
     },
     data() {
       const editorLanguages = [];
@@ -175,26 +165,26 @@
       };
     },
     methods: {
-      ...mapMutations(editor, [
-        mutationTypes.setLanguage,
-        mutationTypes.toggleMinimap,
-        mutationTypes.setEditorTheme,
-        mutationTypes.toggleWhitespace,
-        mutationTypes.toggleWordWrap,
-        mutationTypes.toggleLineNumbers
+      ...mapMutations('editor', [
+        'setLanguage',
+        'toggleMinimap',
+        'setEditorTheme',
+        'toggleWhitespace',
+        'toggleWordWrap',
+        'toggleLineNumbers'
       ]),
-      ...mapActions(fontDialog, {
+      ...mapActions('fontDialog', {
         openFontDialog: 'show'
       }),
-      ...mapActions(settingsDrawer, ['hide']),
+      ...mapActions('settingsDrawer', ['hide']),
       ...mapActions('user', ['signOut']),
       openSignInDialog() {
         this.hide();
-        this.$store.dispatch(`${signInDialog}/show`);
+        this.$store.dispatch('signInDialog/show');
       },
       openSignOutDialog() {
         this.hide();
-        this.$store.dispatch(`${signOutDialog}/show`);
+        this.$store.dispatch('signOutDialog/show');
       }
     }
   };

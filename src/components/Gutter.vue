@@ -32,7 +32,6 @@
   import { mapState, mapActions, mapGetters } from 'vuex';
   import { allThemes } from '@/util/editorThemes';
   import IndentationDialog from '@/components/modal/IndentaionDialog';
-  import { editor, indentDialog } from '@/store/modules/moduleNames';
   // noinspection ES6CheckImport
   import { gutterDark, gutterLight } from '@/assets/scss/_gutter.scss';
 
@@ -41,24 +40,24 @@
       IndentationDialog
     },
     computed: {
-      ...mapState(editor, {
+      ...mapState('editor', {
         selectedLanguage: state => {
           // Capitalize the first letter of the language
           const lang = state.selectedLanguage;
           return lang.charAt(0).toUpperCase() + lang.slice(1);
         }
       }),
-      ...mapState(editor, [
+      ...mapState('editor', [
         'currentTheme',
         'indentSize',
         'useTabs',
         'cursorPosition',
         'selection'
       ]),
-      ...mapGetters(editor, ['contentSizeInBytes'])
+      ...mapGetters('editor', ['contentSizeInBytes'])
     },
     methods: {
-      ...mapActions(indentDialog, {
+      ...mapActions('indentDialog', {
         showIndentDialog: 'show'
       }),
       formatContentSize() {
