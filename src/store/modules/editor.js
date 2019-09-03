@@ -45,14 +45,14 @@ const editor = {
     setFontSize: (state, size) => {
       state.fontSize = size;
     },
-    toggleMinimap: (state, show) => {
-      state.showMinimap = show;
+    toggleMinimap: state => {
+      state.showMinimap = !state.showMinimap;
     },
     setEditorTheme: (state, theme) => {
       state.currentTheme = theme;
     },
-    toggleWhitespace: (state, shouldRender) => {
-      state.renderWhitespace = shouldRender;
+    toggleWhitespace: state => {
+      state.renderWhitespace = !state.renderWhitespace;
     },
     setUseTabs: (state, useTabs) => {
       state.useTabs = useTabs;
@@ -69,37 +69,31 @@ const editor = {
     toggleLineNumbers: state => {
       state.showLineNumbers = !state.showLineNumbers;
     },
-    setSelection(state, payload) {
+    setSelection: (state, payload) => {
       state.selection.lines = payload.lines;
       state.selection.chars = payload.chars;
     },
-    setCursorPosition(state, payload) {
+    setCursorPosition: (state, payload) => {
       state.cursorPosition.line = payload.line;
       state.cursorPosition.col = payload.col;
     },
   },
   actions: {
-    updateEditorContent(context, content) {
+    updateEditorContent: (context, content) => {
       const action = debounce(() => {
         context.commit('setEditorContent', content);
       }, 500);
       action();
     },
-    updateSelection(context, payload) {
+    updateSelection: (context, payload) =>{
       const action = debounce(() => {
-        context.commit('setSelection', {
-          lines: payload.lines,
-          chars: payload.chars
-        });
+        context.commit('setSelection', payload);
       }, 250);
       action();
     },
-    updateCursorPosition(context, payload) {
+    updateCursorPosition: (context, payload) => {
       const action = debounce(() => {
-        context.commit('setCursorPosition', {
-          line: payload.line,
-          col: payload.col
-        });
+        context.commit('setCursorPosition', payload);
       }, 100);
       action();
     }

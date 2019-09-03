@@ -21,35 +21,6 @@ import 'vue-material/dist/theme/default.css';
 import 'vue-material/dist/theme/default-dark.css';
 import { firebase, firebaseDatabase } from '@/util/firebase';
 
-firebase.auth().onAuthStateChanged(user => {
-  store.commit('user/setIsSignedIn', user !== null);
-  store.commit('user/setUid', (user && user.uid) || null);
-  store.commit('user/setEmail', (user && user.email) || null);
-
-  if (user) {
-    const ref = firebaseDatabase.ref(`/users/${user.uid}`);
-
-    ref.once('value').then(snapshot => {
-      // Only give the user a workspace ID if they are registering
-      // for the first time
-      if (!snapshot.exists()) {
-        const workspaceId = uuidv4().slice(0, 8).toUpperCase();
-        ref
-          .set({ workspaceId })
-          .then(() => {
-            store.commit('user/setWorkspaceId', workspaceId);
-            store.dispatch('workspaceIdDialog/show');
-          })
-          .catch(err => console.log(err));
-      } else {
-        store.commit('user/setWorkspaceId', snapshot.val().workspaceId);
-      }
-    });
-  } else {
-    store.commit('user/setWorkspaceId', null);
-  }
-});
-
 Vue.config.productionTip = false;
 Vue.prototype.$firebase = firebase;
 Vue.prototype.$firebaseDB = firebaseDatabase;
@@ -73,6 +44,56 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app');
+
+
+// Triggers when the user signs in/out or when
+// the page first loads. "user" is null when a
+// logout occurs or if this site is visited by an
+// unauthenticated user
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    store.dispatch('user/disconnectFromWorkspace')
+      .catch(err => console.log(err))
+      .finally(() => store.dispatch('user/clearSession'));
+
+  } else {
+    store.commit('user/setIsSignedIn', true);
+    store.commit('user/setUid', user.uid);
+    store.commit('user/setEmail', user.email);
+
+    const registeredUsers = firebaseDatabase.ref(`/registeredUsers/${user.uid}`);
+    const workspaces = firebaseDatabase.ref('/workspaces');
+
+    registeredUsers.once('value').then(snapshot => {
+      // Only give the user a workspace in the db if they
+      // are registering for the first time
+      if (!snapshot.exists()) {
+        const workspaceId = uuidv4().slice(0, 8).toUpperCase();
+
+        registeredUsers.set({ workspaceId })
+          .then(() => {
+            store.commit('user/setWorkspaceId', workspaceId);
+            store.dispatch('workspaceIdDialog/show');
+          })
+          .catch(err => console.log(err));
+
+        workspaces.update({
+          [workspaceId]: {
+            owner: user.email
+          }
+        })
+          .catch(err => console.log(err));
+      } else {
+        store.commit('user/setWorkspaceId', snapshot.val().workspaceId);
+
+        // Makes sure to disconnect the user from any workspaces
+        // when they visit or reload the site
+        store.dispatch('user/disconnectFromWorkspace');
+
+      }
+    });
+  }
+});
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

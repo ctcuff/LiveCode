@@ -2,7 +2,6 @@
   <div>
     <md-dialog :md-active.sync="showDialog" :md-fullscreen="false" :md-click-outside-to-close="false">
       <md-dialog-title>
-<!--        <md-icon>info</md-icon>-->
         Workspace ID
       </md-dialog-title>
       <div class="dialog-body" v-if="isSignedIn">
@@ -27,15 +26,6 @@
         </md-button>
       </md-dialog-actions>
     </md-dialog>
-
-    <md-snackbar
-        md-position="center"
-        :md-duration="3000"
-        :md-active.sync="showSnackbar"
-    >
-      <span>ID Copied to clipboard</span>
-      <md-button class="md-primary" @click="showSnackbar = false">dismiss</md-button>
-    </md-snackbar>
   </div>
 </template>
 
@@ -45,7 +35,7 @@
   export default {
     data() {
       return {
-        showSnackbar: false
+        snackbarText: 'ID Copied to clipboard'
       };
     },
     computed: {
@@ -54,6 +44,7 @@
     },
     methods: {
       ...mapActions('workspaceIdDialog', ['hide']),
+      ...mapActions('snackbar', ['showSnackbar']),
       openSignInDialog() {
         this.$store.dispatch('signInDialog/show');
         this.hide();
@@ -67,7 +58,7 @@
 
         try {
           document.execCommand('copy');
-          this.showSnackbar = true;
+          this.showSnackbar(this.snackbarText);
           this.hide();
         } catch (err) {
           console.error('Fallback: Oops, unable to copy', err);
@@ -82,7 +73,7 @@
         }
         navigator.clipboard.writeText(this.workspaceId)
           .then(() => {
-            this.showSnackbar = true;
+            this.showSnackbar(this.snackbarText);
             this.hide();
           })
           .catch(err => console.log(err));

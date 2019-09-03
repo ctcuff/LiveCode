@@ -23,29 +23,22 @@
             </md-tooltip>
           </md-icon>
           <label>Alias</label>
-          <md-input v-model="alias" disabled></md-input>
+          <md-input v-model="email" disabled></md-input>
         </md-field>
       </div>
       <div class="dialog-body" v-else>
         <p>Sign in to connect to a workspace</p>
       </div>
-
+      <p class="error-msg" v-if="errorMessage !== null">{{errorMessage}}</p>
       <md-dialog-actions>
-        <md-button class="md-primary" @click="hide">Close</md-button>
+        <md-button class="md-primary" @click="closeDialog">Close</md-button>
         <md-button
             class="md-primary"
-            @click="connectToWorkspace"
-            :disabled="connectWorkspaceId.length !== 8"
+            @click="connect"
+            :disabled="isButtonDisabled"
             v-if="isSignedIn"
         >
-          <md-progress-spinner
-              class="md-primary"
-              md-mode="indeterminate"
-              :md-diameter="20"
-              :md-stroke="2"
-              v-if="isConnecting"
-          ></md-progress-spinner>
-          <span v-else>Connect</span>
+          <span>Connect</span>
         </md-button>
         <md-button class="md-primary" @click="openSignInDialog" v-else>
           Sign in
@@ -62,23 +55,65 @@
     data() {
       return {
         connectWorkspaceId: '',
-        isConnecting: false
+        isButtonDisabled: true,
+        errorMessage: null
       };
     },
     computed: {
       ...mapState('connectWorkspaceDialog', ['showDialog']),
-      ...mapState('user', ['isSignedIn', 'workspaceId']),
-      alias() {
-        return `user-${this.workspaceId}`;
+      ...mapState('user', [
+        'isSignedIn',
+        'email',
+        'connectedWorkspaceId'
+      ]),
+      ...mapState('user', {
+        userWorkspaceId: 'workspaceId'
+      })
+    },
+    watch: {
+      connectWorkspaceId(value) {
+        // Only allow letters and numbers
+        const regex = /^[a-z0-9]+$/i;
+
+        if (value === this.userWorkspaceId) {
+          this.isButtonDisabled = true;
+          this.errorMessage = "You can't connect to your own workspace!";
+        } else if (value && !regex.test(value)) {
+          this.isButtonDisabled = true;
+          this.errorMessage = "A workspace ID can only contain alphanumeric characters";
+        } else if (value.length !== 8) {
+          this.isButtonDisabled = true;
+          this.errorMessage = null;
+        } else {
+          this.isButtonDisabled = false;
+        }
       }
     },
     methods: {
       ...mapActions('connectWorkspaceDialog', ['hide']),
+      ...mapActions('user', ['connectToWorkspace']),
+      ...mapActions('snackbar', ['showSnackbar']),
+      closeDialog() {
+        // Need to reset the state of the dialog
+        // when the close button is clicked
+        this.isButtonDisabled = false;
+        this.errorMessage = null;
+        this.connectWorkspaceId = '';
+        this.hide();
+      },
       openSignInDialog() {
         this.$store.dispatch('signInDialog/show');
         this.hide();
       },
-      connectToWorkspace() {
+      connect() {
+        this.isButtonDisabled = true;
+        this.errorMessage = null;
+        this.connectToWorkspace(this.connectWorkspaceId)
+          .then(owner => {
+            this.showSnackbar(`Connected to ${owner}'s workspace`);
+            this.hide();
+          })
+          .catch(err => (this.errorMessage = err));
       }
     }
   };
@@ -109,7 +144,6 @@
     padding: 0 24px;
   }
 
-  // Removes the underline from the alias input
   .md-field {
     margin: 4px 0 6px 0;
 
@@ -119,8 +153,13 @@
       background-color: #424242;
     }
 
+    // Removes the underline from the alias input
     &.md-theme-default.md-disabled:after {
       height: 0;
     }
+  }
+
+  .error-msg {
+    max-width: 266px;
   }
 </style>

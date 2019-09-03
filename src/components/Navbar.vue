@@ -9,7 +9,21 @@
       <md-icon v-else>fullscreen</md-icon>
     </md-button>
 
-    <md-button class="md-icon-button" title="Connect to workspace" @click="openConnectDialog">
+    <md-button
+        class="md-icon-button"
+        title="View connected workspace"
+        @click="openDisconnectDialog"
+        v-if="isConnectedToWorkspace"
+    >
+      <md-icon class="connected">meeting_room</md-icon>
+      <DisconnectWorkspaceDialog />
+    </md-button>
+    <md-button
+        class="md-icon-button"
+        title="Connect to workspace"
+        @click="openConnectDialog"
+        v-else
+    >
       <md-icon>meeting_room</md-icon>
       <ConnectWorkspaceDialog />
     </md-button>
@@ -26,6 +40,7 @@
   import WorkspaceIdDialog from '@/components/modal/WorkspaceIdDialog';
   import ConnectWorkspaceDialog from '@/components/modal/ConnectWorkspaceDialog';
   import { mapActions, mapState } from 'vuex';
+  import DisconnectWorkspaceDialog from '@/components/modal/DisconnectWorkspaceDialog';
 
   // Events fired when the site enters fullscreen
   const events = [
@@ -37,6 +52,7 @@
 
   export default {
     components: {
+      DisconnectWorkspaceDialog,
       WorkspaceIdDialog,
       ConnectWorkspaceDialog
     },
@@ -56,11 +72,15 @@
         document.removeEventListener(event, this.toggleFullscreenIcon);
       });
     },
-    computed: mapState('user', ['isSignedIn']),
+    computed: mapState('user', [
+      'isSignedIn',
+      'isConnectedToWorkspace'
+    ]),
     methods: {
       ...mapActions('workspaceIdDialog', { openIdDialog: 'show' }),
       ...mapActions('settingsDrawer', { openMenu: 'show' }),
       ...mapActions('connectWorkspaceDialog', { openConnectDialog: 'show' }),
+      ...mapActions('disconnectWorkspaceDialog', { openDisconnectDialog: 'show' }),
       toggleFullscreenIcon() {
         this.isFullScreen =
           document.fullScreen ||
@@ -94,9 +114,12 @@
 <style lang="scss" scoped>
   @import "../assets/scss/navbar";
 
-
-  .md-icon.md-theme-default.md-icon-font {
+  .md-icon.md-theme-default.md-icon-font:not(.connected) {
     color: #b9b9b9
+  }
+
+  .md-icon.md-theme-default.md-icon-font.connected {
+    color: #007acc;
   }
 
   .md-toolbar {
