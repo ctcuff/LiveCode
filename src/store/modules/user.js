@@ -22,12 +22,18 @@ export default {
       state.uid = uid;
     },
     setWorkspaceId: (state, workspaceId) => {
+      if (workspaceId) {
+        workspaceId = workspaceId.toUpperCase();
+      }
       state.workspaceId = workspaceId;
     },
     setIsConnected: (state, isConnected) => {
       state.isConnectedToWorkspace = isConnected;
     },
     setConnectedWorkspaceId: (state, id) => {
+      if (id) {
+        id = id.toUpperCase();
+      }
       state.connectedWorkspaceId = id;
     },
     setConnectedWorkspaceEmail: (state, email) => {
@@ -44,9 +50,7 @@ export default {
       commit('setConnectedWorkspaceId', null);
       commit('setConnectedWorkspaceEmail', null);
     },
-    connectToWorkspace: ({ state, commit }, workspaceId) => {
-      workspaceId = workspaceId.toUpperCase();
-
+    connectToWorkspace: ({ state, commit, dispatch }, workspaceId) => {
       return new Promise((resolve, reject) => {
         const workspacesRef = firebaseDatabase.ref(`/workspaces/${workspaceId}`);
         const currentUserRef = firebaseDatabase.ref(`/workspaces/${state.workspaceId}`);
@@ -57,23 +61,33 @@ export default {
           if (!snapshot.exists()) {
             reject("Couldn't find a workspace with this ID");
           } else {
-            workspacesRef.child('usersConnected')
-              .child(state.workspaceId)
-              .set(state.email)
-              .then(() => {
-                const { owner } = snapshot.val();
+            const { owner } = snapshot.val();
 
-                commit('setIsConnected', true);
-                commit('setConnectedWorkspaceId', workspaceId);
-                commit('setConnectedWorkspaceEmail', owner);
+            currentUserRef.child('usersConnected')
+              .once('value')
+              .then(snapshot => {
+                const connectedUsers = snapshot.val();
 
-                currentUserRef
-                  .update({ connectedWorkspaceId: workspaceId })
-                  .catch(err => console.log(err));
+                if (connectedUsers && Object.values(connectedUsers).includes(owner)) {
+                  reject(`Can't connect to this workspace. ${owner} is already connected to yours.`);
+                } else {
+                  workspacesRef.child('usersConnected')
+                    .child(state.workspaceId)
+                    .set(state.email)
+                    .then(() => {
+                      commit('setIsConnected', true);
+                      commit('setConnectedWorkspaceId', workspaceId);
+                      commit('setConnectedWorkspaceEmail', owner);
 
-                resolve(owner);
-              })
-              .catch(err => reject(err));
+                      currentUserRef
+                        .update({ connectedWorkspaceId: workspaceId })
+                        .catch(err => console.log(err));
+
+                      resolve(owner);
+                    })
+                    .catch(err => reject(err));
+                }
+              });
           }
         });
       });
@@ -97,7 +111,6 @@ export default {
           connectedWorkspaceRef.child('usersConnected')
             .child(context.state.workspaceId)
             .remove()
-            .then(() => console.log('Done in first'))
             .catch(err => console.log(err));
 
         })
@@ -109,7 +122,6 @@ export default {
         .child('connectedWorkspaceId')
         .remove()
         .then(() => {
-          console.log('Done in second');
           context.commit('setIsConnected', false);
           context.commit('setConnectedWorkspaceId', null);
           context.commit('setConnectedWorkspaceEmail', null);

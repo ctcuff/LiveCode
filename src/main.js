@@ -84,12 +84,33 @@ firebase.auth().onAuthStateChanged(user => {
         })
           .catch(err => console.log(err));
       } else {
-        store.commit('user/setWorkspaceId', snapshot.val().workspaceId);
+        const { workspaceId } = snapshot.val();
+        const usersConnectedRef = workspaces
+          .child(workspaceId)
+          .child('usersConnected');
+
+        store.commit('user/setWorkspaceId', workspaceId);
 
         // Makes sure to disconnect the user from any workspaces
         // when they visit or reload the site
-        store.dispatch('user/disconnectFromWorkspace');
+        store.dispatch('user/disconnectFromWorkspace')
+          .finally(() => {
+            usersConnectedRef.on('child_added', snapshot => {
+              const userEmail = snapshot.val();
+              store.dispatch(
+                'snackbar/showSnackbar',
+                `${userEmail} connected to your workspace`
+              );
+            });
 
+            usersConnectedRef.on('child_removed', snapshot => {
+              const userEmail = snapshot.val();
+              store.dispatch(
+                'snackbar/showSnackbar',
+                `${userEmail} disconnected from your workspace`
+              );
+            });
+          });
       }
     });
   }
