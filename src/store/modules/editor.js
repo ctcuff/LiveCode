@@ -32,7 +32,8 @@ const editorDefaults = {
     col: 1,
   },
   wordWrap: false,
-  showLineNumbers: true
+  showLineNumbers: true,
+  showIndentGuides: true
 };
 
 const editor = {
@@ -77,6 +78,9 @@ const editor = {
       state.cursorPosition.line = payload.line;
       state.cursorPosition.col = payload.col;
     },
+    toggleIndentGuides: state => {
+      state.showIndentGuides = !state.showIndentGuides;
+    }
   },
   actions: {
     updateEditorContent: (context, content) => {

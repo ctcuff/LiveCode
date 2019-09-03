@@ -116,6 +116,14 @@
         </div>
       </md-list-item>
 
+      <md-list-item @click="toggleIndentGuides">
+        <md-icon>format_line_spacing</md-icon>
+        <div class="md-list-item-text">
+          <span>Toggle indent guides</span>
+          <span>Indent guides will be {{showIndentGuides ? 'shown' : 'hidden'}}</span>
+        </div>
+      </md-list-item>
+
     </md-list>
 
   </md-drawer>
@@ -144,7 +152,8 @@
         'currentTheme',
         'renderWhitespace',
         'wordWrap',
-        'showLineNumbers'
+        'showLineNumbers',
+        'showIndentGuides'
       ]),
       ...mapState('settingsDrawer', {
         showMenu: 'showDialog'
@@ -172,7 +181,8 @@
         'setEditorTheme',
         'toggleWhitespace',
         'toggleWordWrap',
-        'toggleLineNumbers'
+        'toggleLineNumbers',
+        'toggleIndentGuides'
       ]),
       ...mapActions('fontDialog', {
         openFontDialog: 'show'

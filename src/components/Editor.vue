@@ -27,7 +27,8 @@
         'indentSize',
         'useTabs',
         'wordWrap',
-        'showLineNumbers'
+        'showLineNumbers',
+        'showIndentGuides'
       ]),
       ...mapState('settingsDrawer', {
         isSettingsOpen: 'showDialog'
@@ -52,7 +53,8 @@
           showMinimap,
           renderWhitespace,
           wordWrap,
-          showLineNumbers
+          showLineNumbers,
+          showIndentGuides
         } = this;
 
         if (type.includes('editor')) {
@@ -90,6 +92,9 @@
             case 'editor/toggleLineNumbers':
               editor.updateOptions({ lineNumbers: showLineNumbers ? 'on' : 'off' });
               break;
+            case 'editor/toggleIndentGuides':
+              editor.updateOptions({ renderIndentGuides: showIndentGuides });
+              break;
           }
         }
       }
@@ -120,6 +125,7 @@
         autoClosingBrackets: 'always',
         wordWrap: this.wordWrap ? 'on' : 'off',
         lineNumbers: this.showLineNumbers ? 'on' : 'off',
+        renderIndentGuides: this.showIndentGuides,
         minimap: {
           enabled: this.showMinimap
         }
