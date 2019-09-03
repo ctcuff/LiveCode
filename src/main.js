@@ -55,7 +55,6 @@ firebase.auth().onAuthStateChanged(user => {
     store.dispatch('user/disconnectFromWorkspace')
       .catch(err => console.log(err))
       .finally(() => store.dispatch('user/clearSession'));
-
   } else {
     store.commit('user/setIsSignedIn', true);
     store.commit('user/setUid', user.uid);
@@ -79,15 +78,14 @@ firebase.auth().onAuthStateChanged(user => {
 
         workspaces.update({
           [workspaceId]: {
-            owner: user.email
+            owner: user.email,
+            online: true
           }
         })
           .catch(err => console.log(err));
       } else {
         const { workspaceId } = snapshot.val();
-        const usersConnectedRef = workspaces
-          .child(workspaceId)
-          .child('usersConnected');
+        const currentUserRef = workspaces.child(workspaceId);
 
         store.commit('user/setWorkspaceId', workspaceId);
 
@@ -95,21 +93,32 @@ firebase.auth().onAuthStateChanged(user => {
         // when they visit or reload the site
         store.dispatch('user/disconnectFromWorkspace')
           .finally(() => {
-            usersConnectedRef.on('child_added', snapshot => {
-              const userEmail = snapshot.val();
-              store.dispatch(
-                'snackbar/showSnackbar',
-                `${userEmail} connected to your workspace`
-              );
-            });
+            currentUserRef
+              .child('usersConnected')
+              .on('child_added', snapshot => {
+                const userEmail = snapshot.val();
+                store.dispatch(
+                  'snackbar/showSnackbar',
+                  `${userEmail} connected to your workspace`
+                );
+              });
 
-            usersConnectedRef.on('child_removed', snapshot => {
-              const userEmail = snapshot.val();
-              store.dispatch(
-                'snackbar/showSnackbar',
-                `${userEmail} disconnected from your workspace`
-              );
-            });
+            currentUserRef
+              .child('usersConnected')
+              .on('child_removed', snapshot => {
+                const userEmail = snapshot.val();
+                store.dispatch(
+                  'snackbar/showSnackbar',
+                  `${userEmail} disconnected from your workspace`
+                );
+              });
+
+            currentUserRef.update({ online: true });
+            currentUserRef.onDisconnect().update({ online: false });
+            currentUserRef
+              .child('usersConnected')
+              .onDisconnect()
+              .remove();
           });
       }
     });

@@ -15,12 +15,23 @@
   import { mapState, mapActions } from 'vuex';
 
   export default {
-    computed: mapState('signOutDialog', ['showDialog']),
+    computed: {
+      ...mapState('signOutDialog', ['showDialog']),
+      ...mapState('user', ['workspaceId'])
+    },
     methods: {
       ...mapActions('signOutDialog', ['hide']),
+      ...mapActions('snackbar', ['showSnackbar']),
       signOut() {
-        this.$firebase.auth().signOut();
-        this.hide();
+        this.$firebaseDB
+          .ref(`/workspaces/${this.workspaceId}`)
+          .update({ online: false })
+          .then(() => {
+            this.$firebase.auth().signOut();
+            this.showSnackbar('Successfully signed out');
+          })
+          .catch(err => console.log(err))
+          .finally(this.hide);
       }
     }
   };
