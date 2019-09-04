@@ -33,14 +33,15 @@ io.on('connect', socket => {
   });
 
   socket.on('updateEditorContent', payload => {
-    const { room, content } = payload;
+    const { room, content, range } = payload;
     console.log({
       ...payload,
       socketId: socket.id
     });
     io.in(room).emit('editorContentUpdated', {
       updatedContent: content,
-      socketId: socket.id
+      socketId: socket.id,
+      range: range
     });
   });
 

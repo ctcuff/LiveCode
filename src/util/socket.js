@@ -9,8 +9,12 @@ socket.on('sendInitialWorkspace', payload => {
   // Check to make sure this user wasn't the one
   // who sent this request
   if (socket.id !== payload.socketId) {
+
+    // A null range means send the entire
+    // content of the editor
     socket.emit('updateEditorContent', {
       content: store.state.editor.content,
+      range: null,
       room: store.state.user.workspaceId
     });
   }

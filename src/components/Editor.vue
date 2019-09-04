@@ -172,21 +172,36 @@
       });
 
       // Fired when the text in the editor changes
-      editor.onDidChangeModelContent(({ isFlush }) => {
-        if (isFlush) {
-          // Flush will be true when the contents of the editor were
-          // set programmatically. Don't update the editor state since
-          // it'ss cause an endless loop
+      editor.onDidChangeModelContent(e => {
+        let content;
+        let range;
+
+        this.updateEditorContent(editor.getValue());
+
+        if (e.isFlush || e.changes[0].forceMoveMarkers) {
+          // Flush/forceMoveMarkers will be true when the contents of
+          // the editor were set programmatically. Don't update the
+          // editor state since it'll cause an endless loop
           return;
         }
 
-        const content = editor.getValue();
+        // Since undoing/redoing causes so many changes, we'll just
+        // send the entire contents of the editor instead of broadcasting
+        // every change that was undone/redone
+        if (e.isUndoing || e.isRedoing) {
+          range = null;
+          content = editor.getValue();
+        } else {
+          range = e.changes[0].range;
+          content = e.changes[0].text;
+        }
 
         // A user is connected to this workspace so
         // emit to all connected users
         if (this.numUsersConnected > 0) {
           socket.emit('updateEditorContent', {
-            content,
+            content: content,
+            range: range,
             room: this.workspaceId
           });
         } else if (this.connectedWorkspaceId) {
@@ -194,25 +209,37 @@
           // This user is connected to a different workspace
           // so emit to their workspace
           socket.emit('updateEditorContent', {
-            content,
+            content: content,
+            range: range,
             room: this.connectedWorkspaceId
           });
-        } else {
-          this.updateEditorContent(content);
         }
+        // else {
+        //   this.updateEditorContent(content);
+        // }
       });
 
       socket.on('editorContentUpdated', payload => {
-        const { socketId, updatedContent } = payload;
+        const { socketId, updatedContent, range } = payload;
 
         // Make sure this user's edits don't trigger
         // the editor content to update
         if (socket.id !== socketId) {
-          editor.getModel().setValue(updatedContent);
+          if (!range) {
+            editor.getModel().setValue(updatedContent);
+          } else {
+            editor.executeEdits('source', [{
+              identifier: {
+                major: 1,
+                minor: 1
+              },
+              range: range,
+              text: updatedContent,
+              forceMoveMarkers: true
+            }]);
+          }
         }
       });
-
-      window.editor = editor;
     }
   };
 </script>
