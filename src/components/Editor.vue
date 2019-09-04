@@ -7,7 +7,8 @@
 <script>
   import { editor as monacoEditor } from 'monaco-editor';
   import themes from '@/util/editorThemes';
-  import { mapState, mapActions } from 'vuex';
+  import { socket } from '@/util/socket';
+  import { mapState, mapActions, mapGetters } from 'vuex';
   import { editorDefaults } from '@/store/modules/editor';
 
   let editor;
@@ -32,7 +33,12 @@
       ]),
       ...mapState('settingsDrawer', {
         isSettingsOpen: 'showDialog'
-      })
+      }),
+      ...mapState('user', [
+        'workspaceId',
+        'connectedWorkspaceId',
+      ]),
+      ...mapGetters('user', ['numUsersConnected'])
     },
     methods: {
       ...mapActions('editor', [
@@ -166,9 +172,47 @@
       });
 
       // Fired when the text in the editor changes
-      editor.onDidChangeModelContent(() => {
-        this.updateEditorContent(editor.getValue());
+      editor.onDidChangeModelContent(({ isFlush }) => {
+        if (isFlush) {
+          // Flush will be true when the contents of the editor were
+          // set programmatically. Don't update the editor state since
+          // it'ss cause an endless loop
+          return;
+        }
+
+        const content = editor.getValue();
+
+        // A user is connected to this workspace so
+        // emit to all connected users
+        if (this.numUsersConnected > 0) {
+          socket.emit('updateEditorContent', {
+            content,
+            room: this.workspaceId
+          });
+        } else if (this.connectedWorkspaceId) {
+
+          // This user is connected to a different workspace
+          // so emit to their workspace
+          socket.emit('updateEditorContent', {
+            content,
+            room: this.connectedWorkspaceId
+          });
+        } else {
+          this.updateEditorContent(content);
+        }
       });
+
+      socket.on('editorContentUpdated', payload => {
+        const { socketId, updatedContent } = payload;
+
+        // Make sure this user's edits don't trigger
+        // the editor content to update
+        if (socket.id !== socketId) {
+          editor.getModel().setValue(updatedContent);
+        }
+      });
+
+      window.editor = editor;
     }
   };
 </script>

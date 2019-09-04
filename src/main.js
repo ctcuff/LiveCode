@@ -1,6 +1,11 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from '@/store';
+import {
+  socket,
+  joinRoomFromWorkspace,
+  leaveRoomFromWorkspace
+} from '@/util/socket';
 import MdDialog from 'vue-material/dist/components/MdDialog';
 import MdButton from 'vue-material/dist/components/MdButton';
 import MdField from 'vue-material/dist/components/MdField';
@@ -84,46 +89,84 @@ firebase.auth().onAuthStateChanged(user => {
         })
           .catch(err => console.log(err));
       } else {
-        const { workspaceId } = snapshot.val();
-        const currentUserRef = workspaces.child(workspaceId);
-
-        store.commit('user/setWorkspaceId', workspaceId);
-
-        // Makes sure to disconnect the user from any workspaces
-        // when they visit or reload the site
-        store.dispatch('user/disconnectFromWorkspace')
-          .finally(() => {
-            currentUserRef
-              .child('usersConnected')
-              .on('child_added', snapshot => {
-                const userEmail = snapshot.val();
-                store.dispatch(
-                  'snackbar/showSnackbar',
-                  `${userEmail} connected to your workspace`
-                );
-              });
-
-            currentUserRef
-              .child('usersConnected')
-              .on('child_removed', snapshot => {
-                const userEmail = snapshot.val();
-                store.dispatch(
-                  'snackbar/showSnackbar',
-                  `${userEmail} disconnected from your workspace`
-                );
-              });
-
-            currentUserRef.update({ online: true });
-            currentUserRef.onDisconnect().update({ online: false });
-            currentUserRef
-              .child('usersConnected')
-              .onDisconnect()
-              .remove();
-          });
+        // workspaceId and the workspaces ref both belong
+        // to the current user
+        initWorkspace(snapshot.val().workspaceId, workspaces);
       }
     });
   }
 });
+
+
+async function initWorkspace(workspaceId, workspacesRef) {
+  const currentUserRef = workspacesRef.child(workspaceId);
+
+  store.commit('user/setWorkspaceId', workspaceId);
+
+  // Makes sure to disconnect the user from any workspaces
+  // when they visit or reload the site
+  await store.dispatch('user/disconnectFromWorkspace');
+
+  // Attach listeners to listen for users who
+  // connect/disconnect from this workspace
+  currentUserRef
+    .child('usersConnected')
+    .on('child_added', snapshot => {
+      const userEmail = snapshot.val();
+
+      store.commit('user/addUserToWorkspace', {
+        email: userEmail,
+        workspaceId: snapshot.key
+      });
+
+      store.dispatch(
+        'snackbar/showSnackbar',
+        `${userEmail} connected to your workspace`
+      );
+
+      joinRoomFromWorkspace();
+
+      // Makes sure to send the content of this user's editor
+      // to any newly connected users
+      socket.emit('updateEditorContent', {
+        content: store.state.editor.content,
+        room: workspaceId
+      });
+    });
+
+  currentUserRef
+    .child('usersConnected')
+    .on('child_removed', snapshot => {
+      const userEmail = snapshot.val();
+
+      store.dispatch('user/removeUserFromWorkspace', snapshot.key)
+        .then(email => {
+          console.log(`Deleted user with email ${email}`);
+          console.log(store.getters['user/numUsersConnected']);
+        });
+
+      store.dispatch(
+        'snackbar/showSnackbar',
+        `${userEmail} disconnected from your workspace`
+      );
+
+      // The are no more users connected to this workspace
+      // so no need to keep sending data through the socket
+      if (store.getters['user/numUsersConnected'] === 0) {
+        leaveRoomFromWorkspace();
+      }
+    });
+
+  currentUserRef.update({ online: true });
+  currentUserRef.onDisconnect().update({ online: false });
+
+  // Makes sure that all users connected to this workspace
+  // are disconnected when this user leaves the site
+  currentUserRef
+    .child('usersConnected')
+    .onDisconnect()
+    .remove();
+}
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -132,3 +175,5 @@ function uuidv4() {
     return v.toString(16);
   });
 }
+
+window.store = store;

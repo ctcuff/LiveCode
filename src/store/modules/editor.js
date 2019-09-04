@@ -89,7 +89,7 @@ const editor = {
       }, 500);
       action();
     },
-    updateSelection: (context, payload) =>{
+    updateSelection: (context, payload) => {
       const action = debounce(() => {
         context.commit('setSelection', payload);
       }, 250);
