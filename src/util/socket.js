@@ -3,17 +3,24 @@ import store from '@/store';
 
 const socket = io.connect('http://localhost:3000/');
 
-function joinRoomFromWorkspace() {
-  if (!store.state.user.workspaceId) {
-    console.err('FATAL, WORKSPACE ID WAS NULL');
+// Send the content of this user's workspace to anyone
+// connecting when they first join
+socket.on('sendInitialWorkspace', payload => {
+  // Check to make sure this user wasn't the one
+  // who sent this request
+  if (socket.id !== payload.socketId) {
+    socket.emit('updateEditorContent', {
+      content: store.state.editor.content,
+      room: store.state.user.workspaceId
+    });
   }
+});
+
+function joinRoomFromWorkspace() {
   return joinRoom(store.state.user.workspaceId);
 }
 
 function leaveRoomFromWorkspace() {
-  if (!store.state.user.workspaceId) {
-    console.err('FATAL, WORKSPACE ID WAS NULL');
-  }
   return leaveRoom(store.state.user.workspaceId);
 }
 
@@ -26,9 +33,13 @@ function joinRoom(roomName) {
         reject('null payload was received, is there a server issue?');
       }
 
-      // Makes sure this event is only fired when this
-      // user connects to the room
       if (payload.socketId === socket.id) {
+        // Tell the user we're connecting to to
+        // send us their workspace
+        socket.emit('getInitialWorkspace', {
+          id: socket.id,
+          room: roomName
+        });
         resolve();
       }
     });

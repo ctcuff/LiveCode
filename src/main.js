@@ -1,11 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from '@/store';
-import {
-  socket,
-  joinRoomFromWorkspace,
-  leaveRoomFromWorkspace
-} from '@/util/socket';
+import { joinRoomFromWorkspace, leaveRoomFromWorkspace } from '@/util/socket';
 import MdDialog from 'vue-material/dist/components/MdDialog';
 import MdButton from 'vue-material/dist/components/MdButton';
 import MdField from 'vue-material/dist/components/MdField';
@@ -125,13 +121,6 @@ async function initWorkspace(workspaceId, workspacesRef) {
       );
 
       joinRoomFromWorkspace();
-
-      // Makes sure to send the content of this user's editor
-      // to any newly connected users
-      socket.emit('updateEditorContent', {
-        content: store.state.editor.content,
-        room: workspaceId
-      });
     });
 
   currentUserRef
@@ -139,12 +128,7 @@ async function initWorkspace(workspaceId, workspacesRef) {
     .on('child_removed', snapshot => {
       const userEmail = snapshot.val();
 
-      store.dispatch('user/removeUserFromWorkspace', snapshot.key)
-        .then(email => {
-          console.log(`Deleted user with email ${email}`);
-          console.log(store.getters['user/numUsersConnected']);
-        });
-
+      store.dispatch('user/removeUserFromWorkspace', snapshot.key);
       store.dispatch(
         'snackbar/showSnackbar',
         `${userEmail} disconnected from your workspace`

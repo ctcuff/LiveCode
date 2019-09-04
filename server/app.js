@@ -43,6 +43,13 @@ io.on('connect', socket => {
       socketId: socket.id
     });
   });
+
+  socket.on('getInitialWorkspace', payload => {
+
+    io.in(payload.room).emit('sendInitialWorkspace', {
+      socketId: payload.id
+    });
+  });
 });
 
 server.listen(port, () => console.log(`listening on *:${port}`));
