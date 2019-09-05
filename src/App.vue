@@ -26,8 +26,31 @@
   };
 </script>
 
-<style>
+<style lang="scss">
   #app {
     user-select: none;
+  }
+  .md-dialog.md-theme-default {
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #424242;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #9e9e9e;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #828181;
+    }
+  }
+
+  .md-dialog-container {
+    // Fixes blurry text in Chrome
+    -webkit-filter: blur(0.000001px);
   }
 </style>
