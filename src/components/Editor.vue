@@ -179,9 +179,9 @@
         this.updateEditorContent(editor.getValue());
 
         if (e.isFlush || e.changes[0].forceMoveMarkers) {
-          // Flush/forceMoveMarkers will be true when the contents of
-          // the editor were set programmatically. Don't update the
-          // editor state since it'll cause an endless loop
+          // flush/forceMoveMarkers will be true when the contents of
+          // the editor were set programmatically. Don't send
+          // any data since it'ss cause an endless loop
           return;
         }
 
@@ -214,9 +214,6 @@
             room: this.connectedWorkspaceId
           });
         }
-        // else {
-        //   this.updateEditorContent(content);
-        // }
       });
 
       socket.on('editorContentUpdated', payload => {

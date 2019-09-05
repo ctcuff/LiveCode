@@ -67,7 +67,8 @@
         'connectedWorkspaceId'
       ]),
       ...mapState('user', {
-        userWorkspaceId: 'workspaceId'
+        userWorkspaceId: 'workspaceId',
+        connectedWorkspaceEmail: 'connectedWorkspaceEmail'
       })
     },
     watch: {
@@ -109,11 +110,13 @@
         this.isButtonDisabled = true;
         this.errorMessage = null;
         this.connectToWorkspace(this.connectWorkspaceId)
-          .then(owner => {
-            this.showSnackbar(`Connected to ${owner}'s workspace`);
-            this.hide();
+          .then(async () => {
+            await this.hide();
+            await this.showSnackbar(`Connected to ${this.connectedWorkspaceEmail}'s workspace`);
           })
-          .catch(err => (this.errorMessage = err));
+          .catch(err => {
+            this.errorMessage = err.message;
+          });
       }
     }
   };

@@ -85,23 +85,19 @@ firebase.auth().onAuthStateChanged(user => {
         })
           .catch(err => console.log(err));
       } else {
-        // workspaceId and the workspaces ref both belong
-        // to the current user
-        initWorkspace(snapshot.val().workspaceId, workspaces);
+        // "workspaceId" and the "workspaces" ref both
+        // belong to the current user
+        initWorkspace(workspaces, snapshot.val().workspaceId);
       }
     });
   }
 });
 
 
-async function initWorkspace(workspaceId, workspacesRef) {
+function initWorkspace(workspacesRef, workspaceId) {
   const currentUserRef = workspacesRef.child(workspaceId);
 
   store.commit('user/setWorkspaceId', workspaceId);
-
-  // Makes sure to disconnect the user from any workspaces
-  // when they visit or reload the site
-  await store.dispatch('user/disconnectFromWorkspace');
 
   // Attach listeners to listen for users who
   // connect/disconnect from this workspace
@@ -159,5 +155,3 @@ function uuidv4() {
     return v.toString(16);
   });
 }
-
-window.store = store;

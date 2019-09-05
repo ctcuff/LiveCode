@@ -7,7 +7,7 @@ Welcome to LiveCode! This is an online text editor that supports
 multiple languages. To change the current syntax highlighting, 
 open settings, language, than take your pick.
 
-Once you sign in, you'll be given a workspace id. To share you workspace
+Once you sign in, you'll be given a workspace id. To share your workspace
 with someone, click the _info_ icon to the right on the navbar and give 
 them your workspace id.
 
@@ -31,7 +31,7 @@ const editorDefaults = {
     line: 1,
     col: 1,
   },
-  wordWrap: false,
+  wordWrap: true,
   showLineNumbers: true,
   showIndentGuides: true
 };
