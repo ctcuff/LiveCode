@@ -22,16 +22,22 @@
     methods: {
       ...mapActions('signOutDialog', ['hide']),
       ...mapActions('snackbar', ['showSnackbar']),
-      signOut() {
-        this.$firebaseDB
+      ...mapActions('user', [
+        'disconnectFromWorkspace',
+        'clearSession'
+      ]),
+      async signOut() {
+        await this.$firebaseDB
           .ref(`/workspaces/${this.workspaceId}`)
           .update({ online: false })
-          .then(() => {
-            this.$firebase.auth().signOut();
-            this.showSnackbar('Successfully signed out');
-          })
-          .catch(err => console.log(err))
-          .finally(this.hide);
+          .catch(err => console.log(err));
+
+        await this.disconnectFromWorkspace();
+        await this.clearSession();
+        await this.$firebase.auth().signOut();
+        await this.hide();
+
+        this.showSnackbar('Successfully signed out');
       }
     }
   };

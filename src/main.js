@@ -53,44 +53,42 @@ new Vue({
 // unauthenticated user
 firebase.auth().onAuthStateChanged(user => {
   if (!user) {
-    store.dispatch('user/disconnectFromWorkspace')
-      .catch(err => console.log(err))
-      .finally(() => store.dispatch('user/clearSession'));
-  } else {
-    store.commit('user/setIsSignedIn', true);
-    store.commit('user/setUid', user.uid);
-    store.commit('user/setEmail', user.email);
-
-    const registeredUsers = firebaseDatabase.ref(`/registeredUsers/${user.uid}`);
-    const workspaces = firebaseDatabase.ref('/workspaces');
-
-    registeredUsers.once('value').then(snapshot => {
-      // Only give the user a workspace in the db if they
-      // are registering for the first time
-      if (!snapshot.exists()) {
-        const workspaceId = uuidv4().slice(0, 8).toUpperCase();
-
-        registeredUsers.set({ workspaceId })
-          .then(() => {
-            store.commit('user/setWorkspaceId', workspaceId);
-            store.dispatch('workspaceIdDialog/show');
-          })
-          .catch(err => console.log(err));
-
-        workspaces.update({
-          [workspaceId]: {
-            owner: user.email,
-            online: true
-          }
-        })
-          .catch(err => console.log(err));
-      } else {
-        // "workspaceId" and the "workspaces" ref both
-        // belong to the current user
-        initWorkspace(workspaces, snapshot.val().workspaceId);
-      }
-    });
+    return;
   }
+
+  store.commit('user/setIsSignedIn', true);
+  store.commit('user/setUid', user.uid);
+  store.commit('user/setEmail', user.email);
+
+  const registeredUsers = firebaseDatabase.ref(`/registeredUsers/${user.uid}`);
+  const workspaces = firebaseDatabase.ref('/workspaces');
+
+  registeredUsers.once('value').then(snapshot => {
+    // Only give the user a workspace in the db if they
+    // are registering for the first time
+    if (!snapshot.exists()) {
+      const workspaceId = uuidv4().slice(0, 8).toUpperCase();
+
+      registeredUsers.set({ workspaceId })
+        .then(() => {
+          store.commit('user/setWorkspaceId', workspaceId);
+          store.dispatch('workspaceIdDialog/show');
+        })
+        .catch(err => console.log(err));
+
+      workspaces.update({
+        [workspaceId]: {
+          owner: user.email,
+          online: true
+        }
+      })
+        .catch(err => console.log(err));
+    } else {
+      // "workspaceId" and the "workspaces" ref both
+      // belong to the current user
+      initWorkspace(workspaces, snapshot.val().workspaceId);
+    }
+  });
 });
 
 

@@ -109,6 +109,7 @@
       connect() {
         this.isButtonDisabled = true;
         this.errorMessage = null;
+        this.connectWorkspaceId = this.connectWorkspaceId.toUpperCase();
         this.connectToWorkspace(this.connectWorkspaceId)
           .then(async () => {
             await this.hide();

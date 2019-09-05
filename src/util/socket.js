@@ -1,7 +1,11 @@
 import io from 'socket.io-client';
 import store from '@/store';
 
-const socket = io.connect('http://localhost:3000/');
+const socket = io.connect(
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000/'
+    : 'https://livecode-socket.herokuapp.com/'
+);
 
 // Send the content of this user's workspace to anyone
 // connecting when they first join
@@ -29,7 +33,6 @@ function leaveRoomFromWorkspace() {
 }
 
 function joinRoom(roomName) {
-  console.log('Joining room:', roomName);
   return new Promise((resolve, reject) => {
     socket.emit('join room', roomName);
     socket.on('room join success', payload => {
@@ -51,7 +54,6 @@ function joinRoom(roomName) {
 }
 
 function leaveRoom(roomName) {
-  console.log('Leaving room:', roomName);
   return new Promise((resolve, reject) => {
     socket.emit('leave room', roomName);
     socket.on('room leave success', payload => {

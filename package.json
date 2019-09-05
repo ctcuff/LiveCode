@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "serve-production": "serve -d dist",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@types/socket.io-client": "^1.4.32",
@@ -29,6 +30,7 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "gh-pages": "^2.1.1",
     "node-sass": "^4.12.0",
     "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.10",
