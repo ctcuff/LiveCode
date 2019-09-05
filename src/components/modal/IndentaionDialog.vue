@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false" :md-fullscreen="false">
+    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="true" :md-fullscreen="false">
       <md-dialog-title>Indentation Style</md-dialog-title>
       <md-checkbox v-model="useTabs" class="md-primary">
         Indent using tabs<br />
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import { mapActions, mapState, mapMutations } from 'vuex';
+  import { mapActions, mapMutations } from 'vuex';
 
   export default {
     data() {
@@ -31,7 +31,16 @@
         selectedIndentSize: this.$store.state.editor.indentSize
       };
     },
-    computed: mapState('indentDialog', ['showDialog']),
+    computed: {
+      showDialog: {
+        get() {
+          return this.$store.state.indentDialog.showDialog;
+        },
+        set() {
+          this.$store.commit('indentDialog/setShowDialog', false);
+        }
+      }
+    },
     methods: {
       ...mapMutations('editor', [
         'setUseTabs',
@@ -39,7 +48,6 @@
       ]),
       ...mapActions('indentDialog', ['hide']),
       updateIndentOptions() {
-        this.show = false;
         this.setUseTabs(this.useTabs);
         this.setIndentSize(this.selectedIndentSize);
         this.hide();

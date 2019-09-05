@@ -59,6 +59,7 @@ firebase.auth().onAuthStateChanged(user => {
   store.commit('user/setIsSignedIn', true);
   store.commit('user/setUid', user.uid);
   store.commit('user/setEmail', user.email);
+  store.dispatch('snackbar/showSnackbar', `Singed in as ${user.email}`);
 
   const registeredUsers = firebaseDatabase.ref(`/registeredUsers/${user.uid}`);
   const workspaces = firebaseDatabase.ref('/workspaces');

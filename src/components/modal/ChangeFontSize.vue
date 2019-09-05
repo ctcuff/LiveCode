@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false" :md-fullscreen="false">
+    <md-dialog :md-active.sync="showDialog" :md-fullscreen="false">
       <md-dialog-title>Change font size</md-dialog-title>
       <md-field :class="errorClass">
         <label>Font size (px)</label>
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-  import { mapState, mapActions, mapMutations } from 'vuex';
+  import { mapActions, mapMutations } from 'vuex';
 
   export default {
     data() {
@@ -29,7 +29,14 @@
       };
     },
     computed: {
-      ...mapState('fontDialog', ['showDialog']),
+      showDialog: {
+        get() {
+          return this.$store.state.fontDialog.showDialog;
+        },
+        set() {
+          this.$store.commit('fontDialog/setShowDialog', false);
+        }
+      },
       errorClass() {
         return {
           'md-invalid': this.hasError

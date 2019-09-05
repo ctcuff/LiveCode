@@ -16,8 +16,15 @@
 
   export default {
     computed: {
-      ...mapState('signOutDialog', ['showDialog']),
-      ...mapState('user', ['workspaceId'])
+      ...mapState('user', ['workspaceId']),
+      showDialog: {
+        get() {
+          return this.$store.state.signOutDialog.showDialog;
+        },
+        set() {
+          this.$store.commit('signOutDialog/setShowDialog', false);
+        }
+      }
     },
     methods: {
       ...mapActions('signOutDialog', ['hide']),

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog" :md-fullscreen="false" :md-click-outside-to-close="false">
+    <md-dialog :md-active.sync="showDialog" :md-fullscreen="false">
       <md-dialog-title>
         {{authErrorOccurred ? 'Oops!' : 'Chose sign in method'}}
       </md-dialog-title>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import { mapState, mapMutations } from 'vuex';
+  import { mapMutations } from 'vuex';
   import googleSvg from '@/assets/svg/google.svg';
   import githubSvg from '@/assets/svg/github.svg';
 
@@ -47,7 +47,14 @@
       };
     },
     computed: {
-      ...mapState('signInDialog', ['showDialog']),
+      showDialog: {
+        get() {
+          return this.$store.state.signInDialog.showDialog;
+        },
+        set() {
+          this.$store.commit('signInDialog/setShowDialog', false);
+        }
+      },
       listDisabled() {
         return {
           'list-disabled': this.isAuthInProgress

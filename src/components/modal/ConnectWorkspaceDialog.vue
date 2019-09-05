@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog" :md-click-outside-to-close="false" :md-fullscreen="false">
+    <md-dialog :md-active.sync="showDialog" :md-fullscreen="false">
       <md-dialog-title>
         Connect to Workspace
       </md-dialog-title>
@@ -60,7 +60,14 @@
       };
     },
     computed: {
-      ...mapState('connectWorkspaceDialog', ['showDialog']),
+      showDialog: {
+        get() {
+          return this.$store.state.connectWorkspaceDialog.showDialog;
+        },
+        set() {
+          this.$store.commit('connectWorkspaceDialog/setShowDialog', false);
+        }
+      },
       ...mapState('user', [
         'isSignedIn',
         'email',

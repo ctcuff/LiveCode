@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog" :md-fullscreen="false" :md-click-outside-to-close="false">
+    <md-dialog :md-active.sync="showDialog" :md-fullscreen="false">
       <md-dialog-title>
         Connected Workspace
       </md-dialog-title>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex';
+  import { mapActions } from 'vuex';
 
   export default {
     data() {
@@ -27,7 +27,16 @@
         connectedWorkspaceEmail: this.$store.state.user.connectedWorkspaceEmail
       };
     },
-    computed: mapState('disconnectWorkspaceDialog', ['showDialog']),
+    computed: {
+      showDialog: {
+        get() {
+          return this.$store.state.disconnectWorkspaceDialog.showDialog;
+        },
+        set() {
+          this.$store.commit('disconnectWorkspaceDialog/setShowDialog', false);
+        }
+      }
+    },
     methods: {
       ...mapActions('disconnectWorkspaceDialog', ['hide']),
       ...mapActions('user', ['disconnectFromWorkspace']),
