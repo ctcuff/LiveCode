@@ -1,4 +1,4 @@
-# LiveCode
+# [LiveCode](https://ctcuff.github.io/LiveCode)
 LiveCode is a website built using Vue that lets you edit code online collaboratively. It uses Microsoft's [monaco editor](https://github.com/microsoft/monaco-editor) to deliver a text-editing experience that feels just like using VSCode. Note that Monaco Editor [isn't supported on mobile devices](https://github.com/Microsoft/monaco-editor/issues/246) so because of this, [Ace](https://ace.c9.io/) is used on mobile instead.
 
 <p align="center">
