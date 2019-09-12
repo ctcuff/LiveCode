@@ -18,7 +18,6 @@ module.exports = {
   ],
   rules: {
     semi: 'error',
-    // quotes: ['warn', 'single'],
     'no-console': 'off',
   },
   parserOptions: {

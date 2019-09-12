@@ -2,7 +2,8 @@
   <div id="app">
     <SettingsDrawer />
     <Navbar />
-    <Editor />
+    <EditorMobile v-if="$isMobile" />
+    <Editor v-else />
     <Gutter />
     <Snackbar />
   </div>
@@ -14,11 +15,13 @@
   import Gutter from '@/components/Gutter';
   import SettingsDrawer from '@/components/SettingsDrawer';
   import Snackbar from '@/components/modal/Snackbar';
+  import EditorMobile from '@/components/EditorMobile';
 
   export default {
     components: {
       Snackbar,
       Editor,
+      EditorMobile,
       Navbar,
       Gutter,
       SettingsDrawer,
@@ -30,8 +33,10 @@
   #app {
     user-select: none;
   }
+
   .md-dialog.md-theme-default {
     overflow-y: auto;
+
     &::-webkit-scrollbar {
       width: 8px;
     }

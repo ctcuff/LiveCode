@@ -1,12 +1,9 @@
 <template>
-  <div>
-    <div id="editor"></div>
-  </div>
+  <div id="editor"></div>
 </template>
 
 <script>
   import { editor as monacoEditor } from 'monaco-editor';
-  import themes from '@/util/editorThemes';
   import { socket } from '@/util/socket';
   import { mapState, mapActions, mapGetters } from 'vuex';
   import { editorDefaults } from '@/store/modules/editor';
@@ -108,15 +105,6 @@
     mounted() {
       this.$store.subscribe(this.handleConfigChange);
 
-      Object.keys(themes).forEach(themeName => {
-        // If the theme data is null, that means it's a default
-        // theme that came with monaco
-        const themeData = themes[themeName].themeData;
-        if (themeData) {
-          monacoEditor.defineTheme(themeName, themeData);
-        }
-      });
-
       model.updateOptions({
         tabSize: this.tabSize,
         insertSpaces: !this.useTabs,
@@ -181,7 +169,7 @@
         if (e.isFlush || e.changes[0].forceMoveMarkers) {
           // flush/forceMoveMarkers will be true when the contents of
           // the editor were set programmatically. Don't send
-          // any data since it'ss cause an endless loop
+          // any data since it'll cause an endless loop
           return;
         }
 

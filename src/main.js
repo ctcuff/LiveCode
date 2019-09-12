@@ -2,6 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import store from '@/store';
 import { joinRoomFromWorkspace, leaveRoomFromWorkspace } from '@/util/socket';
+import { firebase, firebaseDatabase } from '@/util/firebase';
 import MdDialog from 'vue-material/dist/components/MdDialog';
 import MdButton from 'vue-material/dist/components/MdButton';
 import MdField from 'vue-material/dist/components/MdField';
@@ -20,9 +21,10 @@ import '@/assets/scss/global.scss';
 import 'vue-material/dist/vue-material.min.css';
 import 'vue-material/dist/theme/default.css';
 import 'vue-material/dist/theme/default-dark.css';
-import { firebase, firebaseDatabase } from '@/util/firebase';
+import isMobile from '@/util/detectMobile';
 
 Vue.config.productionTip = false;
+Vue.prototype.$isMobile = isMobile();
 Vue.prototype.$firebase = firebase;
 Vue.prototype.$firebaseDB = firebaseDatabase;
 
@@ -59,7 +61,6 @@ firebase.auth().onAuthStateChanged(user => {
   store.commit('user/setIsSignedIn', true);
   store.commit('user/setUid', user.uid);
   store.commit('user/setEmail', user.email);
-  store.dispatch('snackbar/showSnackbar', `Singed in as ${user.email}`);
 
   const registeredUsers = firebaseDatabase.ref(`/registeredUsers/${user.uid}`);
   const workspaces = firebaseDatabase.ref('/workspaces');

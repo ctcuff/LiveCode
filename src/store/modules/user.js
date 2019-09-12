@@ -41,6 +41,9 @@ export default {
     setConnectedWorkspaceEmail: (state, email) => {
       state.connectedWorkspaceEmail = email;
     },
+    setIsAnonymous: (state, isAnonymous) => {
+      state.isAnonymous = isAnonymous;
+    },
     addUserToWorkspace: (state, user) => {
       state.usersConnected.push({
         email: user.email,
@@ -65,7 +68,7 @@ export default {
         }
       });
     },
-    clearSession: ({ commit }) => {
+    clearSession: async ({ commit }) => {
       commit('setIsSignedIn', false);
       commit('setUid', null);
       commit('setWorkspaceId', null);

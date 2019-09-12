@@ -1,11 +1,7 @@
 import io from 'socket.io-client';
 import store from '@/store';
 
-const socket = io.connect(
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000/'
-    : 'https://livecode-socket.herokuapp.com/'
-);
+const socket = io.connect('https://livecode-socket.herokuapp.com/');
 
 // Send the content of this user's workspace to anyone
 // connecting when they first join

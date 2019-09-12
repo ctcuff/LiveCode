@@ -1,5 +1,5 @@
 <template>
-  <md-dialog :md-active.sync="showDialog">
+  <md-dialog :md-active.sync="showDialog" :md-fullscreen="false">
     <md-dialog-title>Sign out</md-dialog-title>
     <md-dialog-content id="auth-error-msg">
       <span>Are you sure you want to sign out?</span>

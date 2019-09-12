@@ -84,7 +84,7 @@
         </md-list-item>
       </md-menu>
 
-      <md-list-item @click="toggleMinimap">
+      <md-list-item @click="toggleMinimap" v-if="!$isMobile">
         <md-icon>map</md-icon>
         <div class="md-list-item-text">
           <span>Toggle minimap</span>
@@ -133,10 +133,12 @@
   import { editorDefaults } from '@/store/modules/editor';
   import { mapState, mapMutations, mapActions } from 'vuex';
   import { languages } from 'monaco-editor';
-  import themes from '@/util/editorThemes';
+  import { desktopThemes, mobileThemes } from '@/util/editorThemes';
   import ChangeFontSize from '@/components/modal/ChangeFontSize';
   import SignInDialog from '@/components/modal/SignInDialog';
   import SignOutDialog from '@/components/modal/SignOutDialog';
+
+  const ace = window.ace;
 
   export default {
     components: {
@@ -161,17 +163,21 @@
       ...mapState('user', ['isSignedIn', 'email'])
     },
     data() {
-      const themeNames = Object.keys(themes).sort();
       const editorLanguages = [];
-      languages.getLanguages().forEach(({ id }) => editorLanguages.push(id));
-      editorLanguages.sort();
+      if (this.$isMobile) {
+        const modeList = ace.require('ace/ext/modelist');
+        modeList.modes.forEach(mode => editorLanguages.push(mode.name));
+      } else {
+        languages.getLanguages().forEach(({ id }) => editorLanguages.push(id));
+        editorLanguages.sort();
+      }
 
       return {
         editorLanguages,
         menuVisible: false,
         defaultFontSize: editorDefaults.fontSize,
-        defaultTheme: editorDefaults.theme,
-        themes: themeNames
+        defaultTheme: editorDefaults.currentTheme,
+        themes: Object.keys(this.$isMobile ? mobileThemes : desktopThemes)
       };
     },
     methods: {
@@ -212,6 +218,7 @@
 
     &.md-theme-default {
       background-color: #252526;
+      z-index: 9;
     }
   }
 

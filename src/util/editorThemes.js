@@ -1,21 +1,12 @@
-import monokai from '@/assets/themes/monokai';
-import chromeDevTools from '@/assets/themes/chromeDevTools';
-
-export default  {
-  'monokai': {
-    themeData: monokai,
-    isLight: false
-  },
-  'chrome-devtools': {
-    themeData: chromeDevTools,
-    isLight: true
-  },
+const ace = window.ace;
+const mobileThemes = ace.require('ace/ext/themelist').themesByName;
+const desktopThemes = {
   'vs-dark': {
-    themeData: null,
-    isLight: false
+    isDark: true
   },
   'vs-light': {
-    themeData: null,
-    isLight: true
+    isDark: false
   }
 };
+
+export { desktopThemes, mobileThemes };

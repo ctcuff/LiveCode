@@ -30,7 +30,7 @@
 
 <script>
   import { mapState, mapActions, mapGetters } from 'vuex';
-  import themes from '@/util/editorThemes';
+  import { desktopThemes, mobileThemes } from '@/util/editorThemes';
   import IndentationDialog from '@/components/modal/IndentaionDialog';
   // noinspection ES6CheckImport
   import { gutterDark, gutterLight } from '@/assets/scss/_gutter.scss';
@@ -73,13 +73,12 @@
       }
     },
     mounted() {
+      const themesUsed = this.$isMobile ? mobileThemes : desktopThemes;
       this.$store.watch(
         state => state.editor.currentTheme,
-        theme => {
-          this.$refs.gutter.style.backgroundColor = themes[theme].isLight
-            ? gutterDark
-            : gutterLight;
-        }
+        theme => this.$refs.gutter.style.backgroundColor = themesUsed[theme].isDark
+          ? gutterLight
+          : gutterDark
       );
     }
   };
@@ -96,7 +95,7 @@
     width: 100%;
     height: $gutter-height;
     background-color: $gutter-light;
-    z-index: 1;
+    z-index: 8;
     display: flex;
     align-items: center;
 
@@ -135,6 +134,7 @@
 
     & span {
       flex: 1;
+
       &#char-count {
         margin-right: 2px;
       }

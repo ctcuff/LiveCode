@@ -1,24 +1,23 @@
 import debounce from '@/util/debounce';
+import isMobile from '@/util/detectMobile';
 
 const editorContent = `
 # LiveCode
-
 Welcome to LiveCode! This is an online text editor that supports
 multiple languages. To change the current syntax highlighting, 
 open settings, language, than take your pick.
-
 Once you sign in, you'll be given a workspace id. To share your workspace
 with someone, click the _info_ icon to the right on the navbar and give 
 them your workspace id.
-
 Happy editing!`;
+
+const theme = isMobile() ? 'tomorrow_night_eighties' : 'vs-dark';
 
 const editorDefaults = {
   selectedLanguage: 'markdown',
   fontSize: 16,
   showMinimap: false,
-  theme: 'vs-dark',
-  currentTheme: 'vs-dark',
+  currentTheme: theme,
   renderWhitespace: false,
   indentSize: 4,
   useTabs: true,
