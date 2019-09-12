@@ -1,9 +1,13 @@
 # [LiveCode](https://ctcuff.github.io/LiveCode)
-LiveCode is a website built using Vue that lets you edit code online collaboratively. It uses Microsoft's [monaco editor](https://github.com/microsoft/monaco-editor) to deliver a text-editing experience that feels just like using VSCode. Note that Monaco Editor [isn't supported on mobile devices](https://github.com/Microsoft/monaco-editor/issues/246) so because of this, [Ace](https://ace.c9.io/) is used on mobile instead.
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/7400747/64821681-685e0380-d581-11e9-9050-48b61b80dbfd.gif">
 </p>
+
+LiveCode is a website built using Vue that lets you edit code online collaboratively. It uses Microsoft's [monaco editor](https://github.com/microsoft/monaco-editor) to deliver a text-editing experience that feels just like using VSCode. Note that Monaco Editor [isn't supported on mobile devices](https://github.com/Microsoft/monaco-editor/issues/246) so because of this, [Ace](https://ace.c9.io/) is used on mobile instead.
+
+# How does it work?
+When a user signs in, they'll get a randomly generated workspace ID and they'll be added to a Firebase database. When another user connects to their workspace, they'll be added to a socket.io room. When someone types, those changes will be broadcast to everyone (except for the user that made those changes) in that room.
 
 # How do I build this?
 
