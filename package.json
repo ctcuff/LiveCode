@@ -16,7 +16,7 @@
     "firebase": "^6.4.2",
     "monaco-editor": "0.17.1",
     "monaco-editor-webpack-plugin": "^1.7.0",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.4.0",
     "socket.io-client": "^2.2.0",
     "vue": "^2.6.10",
     "vue-material": "^1.0.0-beta-11",
